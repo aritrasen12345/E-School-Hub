@@ -6,6 +6,7 @@ import { ConfigModule } from '@nestjs/config';
 import { MongooseModule } from '@nestjs/mongoose';
 import { mongooseAsyncConfig } from './config/db/mongoose.config';
 import { StudentModule } from './modules/student/student.module';
+import { AuthModule } from './modules/auth/auth.module';
 
 @Module({
   imports: [
@@ -23,6 +24,8 @@ import { StudentModule } from './modules/student/student.module';
 
     // * Import custom module
     StudentModule,
+
+    AuthModule,
   ],
   controllers: [AppController],
   providers: [AppService],
