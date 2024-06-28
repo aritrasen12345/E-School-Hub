@@ -12,7 +12,7 @@ export class TasksService {
     private readonly configService: ConfigService,
   ) {}
 
-  @Cron('*/14 * * * *')
+  // @Cron('*/14 * * * *')
   //   @Cron('45 * * * * *')
   async handleCron() {
     this.logger.debug('Called when the current second is 45');
