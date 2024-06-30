@@ -7,8 +7,9 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { mongooseAsyncConfig } from './config/db/mongoose.config';
 import { StudentModule } from './modules/student/student.module';
 import { AuthModule } from './modules/auth/auth.module';
-import { APP_FILTER } from '@nestjs/core';
+import { APP_FILTER, APP_INTERCEPTOR } from '@nestjs/core';
 import { AllExceptionFilter } from './common/filters';
+import { ResponseInterceptor } from './common/interceptors';
 
 @Module({
   imports: [
@@ -27,10 +28,15 @@ import { AllExceptionFilter } from './common/filters';
     // * Import custom module
     StudentModule,
 
+    // * Import Auth module
     AuthModule,
   ],
   controllers: [AppController],
   providers: [
+    {
+      provide: APP_INTERCEPTOR,
+      useClass: ResponseInterceptor,
+    },
     {
       provide: APP_FILTER,
       useClass: AllExceptionFilter,
