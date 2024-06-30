@@ -10,7 +10,7 @@ import * as bcrypt from 'bcrypt';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 // * LOCAL IMPORTS
-import { School } from 'src/common/schemas';
+import { RefreshToken, School } from 'src/common/schemas';
 import { AuthHelper } from './helpers/auth.helper';
 import { SchoolDocument } from 'src/common/types';
 import { JwtService } from '@nestjs/jwt';
@@ -21,6 +21,8 @@ export class AuthService {
 
   constructor(
     @InjectModel(School.name) private readonly schoolModel: Model<School>,
+    @InjectModel(RefreshToken.name)
+    private readonly refreshTokenModel: Model<RefreshToken>,
     private readonly authHelper: AuthHelper,
     @Inject('ACCESS_TOKEN') private readonly accessJwtService: JwtService,
   ) {}
@@ -103,5 +105,32 @@ export class AuthService {
     });
 
     return { accessToken };
+  }
+
+  // * METHOD TO DELETE REFRESH TOKEN
+  async deleteRefreshToken(
+    refreshToken: string,
+    ipAddress: string,
+  ): Promise<{ isSuccessful: boolean }> {
+    this.logger.debug('Inside deleteRefreshToken!');
+
+    // * FINDING THE REFRESH TOKEN
+    const foundToken = await this.refreshTokenModel.findOne({
+      token: refreshToken,
+      ipAddress,
+    });
+
+    // * IF REFRESH TOKEN IS NOT FOUND
+    if (!foundToken) {
+      throw new UnauthorizedException(`Invalid refresh token. Can't delete!`);
+    }
+
+    // * IF FOUND THEN MARKING THE TOKEN AS DELETED
+    foundToken.isDeleted = true;
+
+    // * UPDATE THE TOKEN IN DB
+    await foundToken.save();
+
+    return { isSuccessful: true };
   }
 }

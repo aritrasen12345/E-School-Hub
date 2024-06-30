@@ -66,4 +66,35 @@ export class AuthController {
 
     return accessToken;
   }
+
+  // * DELETE REFRESH TOKEN
+  @Post('/delete_refresh_token')
+  @ApiOperation({
+    summary: 'Delete refresh token!',
+    operationId: 'deleteRefreshToken',
+  })
+  @ApiOkResponse({
+    description: 'Refresh token deleted successfully!',
+    // type: String, // TODO
+  })
+  async deleteRefreshToken(
+    @Req() req,
+    @Body() body: RefreshAccessTokenRequestDto,
+  ) {
+    this.logger.debug('Inside deleteRefreshToken!');
+
+    const { refreshToken } = body;
+
+    const { isSuccessful } = await this.authService.deleteRefreshToken(
+      refreshToken,
+      req.ip,
+    );
+
+    return {
+      message: isSuccessful
+        ? 'Refresh token deleted successfully!'
+        : 'Unable to delete refresh token!',
+      data: {},
+    };
+  }
 }
