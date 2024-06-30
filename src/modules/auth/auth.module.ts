@@ -16,6 +16,7 @@ import { LocalStrategy } from './strategies/local.strategy';
 import { AuthService } from './auth.service';
 import { AuthController } from './auth.controller';
 import { AuthUtil } from './util/auth.util';
+import { MailModule } from '../mail/mail.module';
 
 @Module({
   imports: [
@@ -76,6 +77,9 @@ import { AuthUtil } from './util/auth.util';
         },
       }),
     }),
+
+    // * IMPORT MAIL_MODULE
+    MailModule,
   ],
   controllers: [AuthController],
   providers: [

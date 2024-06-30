@@ -10,6 +10,7 @@ import { AuthModule } from './modules/auth/auth.module';
 import { APP_FILTER, APP_INTERCEPTOR } from '@nestjs/core';
 import { AllExceptionFilter } from './common/filters';
 import { ResponseInterceptor } from './common/interceptors';
+import { MailModule } from './modules/mail/mail.module';
 
 @Module({
   imports: [
@@ -30,6 +31,9 @@ import { ResponseInterceptor } from './common/interceptors';
 
     // * Import Auth module
     AuthModule,
+
+    // * IMPORT MAIL MODULE
+    MailModule,
   ],
   controllers: [AppController],
   providers: [

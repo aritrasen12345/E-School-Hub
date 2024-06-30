@@ -19,6 +19,7 @@ export class AuthHelper {
     @Inject('REFRESH_JWT') private readonly refreshJwtService: JwtService,
   ) {}
 
+  // * METHOD TO GENERATE ACCESS AND REFRESH TOKEN
   async generateTokens(
     schoolId: string,
     ipAddress: string,

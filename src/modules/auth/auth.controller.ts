@@ -6,6 +6,8 @@ import {
   LoginRequestDto,
   LoginResponseDto,
   RefreshAccessTokenRequestDto,
+  ResetPasswordRequestDto,
+  SendEmailRequestDto,
   VerifySchoolRequestDto,
 } from './dtos';
 import { SchoolDocument } from 'src/common/types';
@@ -131,6 +133,57 @@ export class AuthController {
     return {
       message: 'Organisation verified successfully!',
       data: verifySchoolDetails,
+    };
+  }
+
+  // * FORGET PASSWORD SEND EMAIL
+  @Post('/send_email')
+  @ApiOperation({
+    summary: 'send forget password email!',
+    operationId: 'sendEmail',
+  })
+  @ApiOkResponse({
+    description:
+      'A password reset link has been sent to your registered email Id.',
+    // type: //! TODO DEFINE TYPE
+  })
+  async forgetPassword(
+    @Body() body: SendEmailRequestDto,
+  ): Promise<ApiResponse<any>> {
+    this.logger.debug('Inside forgetPassword!');
+
+    const { email } = body;
+
+    const savedEmailDetails =
+      await this.authService.sendPasswordResetEmail(email);
+
+    return {
+      message:
+        'A password reset link has been sent to your registered email Id.',
+      data: savedEmailDetails,
+    };
+  }
+
+  // * RESET PASSWORD SEND EMAIL
+  @Post('/reset_password')
+  @ApiOperation({
+    summary: 'Reset password!',
+    operationId: 'resetPassword',
+  })
+  @ApiOkResponse({
+    description: 'Password updated successfully!',
+    // type: '' //! TODO DEFINE TYPE
+  })
+  async resetPassword(
+    @Body() body: ResetPasswordRequestDto,
+  ): Promise<ApiResponse<SchoolDocument>> {
+    this.logger.debug('Inside resetPassword!');
+
+    const resetPasswordDetails = await this.authService.resetPassword(body);
+
+    return {
+      message: 'Password updated successfully',
+      data: resetPasswordDetails,
     };
   }
 }

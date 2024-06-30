@@ -23,4 +23,19 @@ export class AuthUtil {
 
     return schoolId;
   }
+
+  // * METHOD TO VALIDATE
+  async verifyResetPasswordJWT(token: string): Promise<string> {
+    this.logger.debug('Inside verifyResetPasswordJWT!');
+
+    // * VERIFY FORGET_PASSWORD
+    const { id: schoolId } =
+      await this.forgetPasswordJwtService.verifyAsync(token);
+
+    if (!schoolId) {
+      throw new UnauthorizedException('Invalid Link!');
+    }
+
+    return schoolId;
+  }
 }
