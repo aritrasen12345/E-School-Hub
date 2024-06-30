@@ -1,5 +1,6 @@
 // * PACKAGE IMPORTS
 import {
+  Inject,
   Injectable,
   Logger,
   NotFoundException,
@@ -12,6 +13,7 @@ import { Model } from 'mongoose';
 import { School } from 'src/common/schemas';
 import { AuthHelper } from './helpers/auth.helper';
 import { SchoolDocument } from 'src/common/types';
+import { JwtService } from '@nestjs/jwt';
 
 @Injectable()
 export class AuthService {
@@ -20,6 +22,7 @@ export class AuthService {
   constructor(
     @InjectModel(School.name) private readonly schoolModel: Model<School>,
     private readonly authHelper: AuthHelper,
+    @Inject('ACCESS_TOKEN') private readonly accessJwtService: JwtService,
   ) {}
 
   // * METHOD FOR GENERATING ACCESS AND REFRESH TOKENS
@@ -75,5 +78,30 @@ export class AuthService {
 
     // * IF EVERYTHING WAS SUCCESSFUL
     return foundSchool;
+  }
+
+  // * METHOD FOR REFRESHING ACCESS TOKEN
+  async refreshAccessToken(
+    refreshToken: string,
+    ipAddress: string,
+  ): Promise<{ accessToken: string }> {
+    this.logger.debug('Inside refreshAccessToken!');
+
+    // * VALIDATING THE REFRESH TOKEN
+    const { isValidated, schoolId } =
+      await this.authHelper.validateRefreshToken(refreshToken, ipAddress);
+
+    if (!isValidated) {
+      throw new UnauthorizedException(
+        `Invalid refresh token. Can't create a access token.`,
+      );
+    }
+
+    // * IF THE REFRESH TOKEN IS VALIDATED SUCCESSFULLY THEN CREATING A NEW TOKEN
+    const accessToken = await this.accessJwtService.signAsync({
+      id: schoolId,
+    });
+
+    return { accessToken };
   }
 }

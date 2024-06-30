@@ -2,7 +2,11 @@ import { Body, Controller, Logger, Post, Req, UseGuards } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { LocalAuthGuard } from './guards/local-auth.guard';
 import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
-import { LoginRequestDto, LoginResponseDto } from './dtos';
+import {
+  LoginRequestDto,
+  LoginResponseDto,
+  RefreshAccessTokenRequestDto,
+} from './dtos';
 
 @ApiTags('auth')
 @Controller('auth')
@@ -24,6 +28,7 @@ export class AuthController {
   })
   async login(
     @Req() req,
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     @Body() body: LoginRequestDto,
   ): Promise<{ accessToken: string; refreshToken: string }> {
     this.logger.debug('Inside login!');
@@ -33,5 +38,32 @@ export class AuthController {
     );
 
     return { accessToken, refreshToken };
+  }
+
+  // * REFRESH ACCESS TOKEN
+  @Post('/refresh_access_token')
+  @ApiOperation({
+    summary: 'Refresh access token!',
+    operationId: 'refreshAccessToken',
+  })
+  @ApiOkResponse({
+    description: 'Access token generated successfully!',
+    type: String,
+  })
+  async refreshAccessToken(
+    @Req() req,
+    @Body() body: RefreshAccessTokenRequestDto,
+  ): Promise<string> {
+    this.logger.debug('Inside refreshAccessToken!');
+
+    const { refreshToken } = body;
+
+    // * REFRESH ACCESS TOKEN
+    const { accessToken } = await this.authService.refreshAccessToken(
+      refreshToken,
+      req.ip,
+    );
+
+    return accessToken;
   }
 }
