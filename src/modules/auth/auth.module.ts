@@ -15,6 +15,7 @@ import { JWTStrategy } from './strategies/jwt.strategy';
 import { LocalStrategy } from './strategies/local.strategy';
 import { AuthService } from './auth.service';
 import { AuthController } from './auth.controller';
+import { AuthUtil } from './util/auth.util';
 
 @Module({
   imports: [
@@ -30,7 +31,7 @@ import { AuthController } from './auth.controller';
       inject: [ConfigService],
       useFactory: async (configService: ConfigService) => ({
         name: 'ACCESS_JWT',
-        secret: configService.get<string>('ACCESS_TOKEN_SECRET_KEy'),
+        secret: configService.get<string>('ACCESS_TOKEN_SECRET_KEY'),
         signOptions: {
           expiresIn: '10m',
         },
@@ -43,9 +44,35 @@ import { AuthController } from './auth.controller';
       inject: [ConfigService],
       useFactory: async (configService: ConfigService) => ({
         name: 'REFRESH_JWT',
-        secret: configService.get<string>('REFRESH_TOKEN_SECRET_KEy'),
+        secret: configService.get<string>('REFRESH_TOKEN_SECRET_KEY'),
         signOptions: {
           expiresIn: '30d',
+        },
+      }),
+    }),
+
+    // * IMPORT FORGET_PASSWORD_TOKEN JWT_MODULE
+    JwtModule.registerAsync({
+      imports: [ConfigModule],
+      inject: [ConfigService],
+      useFactory: async (configService: ConfigService) => ({
+        name: 'FORGET_PASSWORD_JWT',
+        secret: configService.get<string>('FORGET_PASSWORD_SECRET_KEY'),
+        signOptions: {
+          expiresIn: '3600s',
+        },
+      }),
+    }),
+
+    // * IMPORT CREATED_PASSWORD_TOKEN JWT MODULE
+    JwtModule.registerAsync({
+      imports: [ConfigModule],
+      inject: [ConfigService],
+      useFactory: async (configService: ConfigService) => ({
+        name: 'CREATED_SCHOOL_JWT',
+        secret: configService.get<string>('CREATED_SCHOOL_SECRET_KEY'),
+        signOptions: {
+          expiresIn: '1d',
         },
       }),
     }),
@@ -54,14 +81,27 @@ import { AuthController } from './auth.controller';
   providers: [
     AuthService,
     AuthHelper,
+    AuthUtil,
     {
-      provide: 'ACCESS_TOKEN',
-      useFactory: (jwtService: JwtService) => jwtService,
+      provide: 'ACCESS_JWT',
+      useFactory: (accessJwtService: JwtService) => accessJwtService,
       inject: [JwtService],
     },
     {
       provide: 'REFRESH_JWT',
       useFactory: (refreshJwtService: JwtService) => refreshJwtService,
+      inject: [JwtService],
+    },
+    {
+      provide: 'CREATED_SCHOOL_JWT',
+      useFactory: (createdSchoolJwtService: JwtService) =>
+        createdSchoolJwtService,
+      inject: [JwtService],
+    },
+    {
+      provide: 'FORGET_PASSWORD_JWT',
+      useFactory: (forgetPasswordJwtService: JwtService) =>
+        forgetPasswordJwtService,
       inject: [JwtService],
     },
     JWTStrategy,

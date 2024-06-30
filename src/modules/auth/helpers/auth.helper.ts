@@ -15,7 +15,7 @@ export class AuthHelper {
   constructor(
     @InjectModel(RefreshToken.name)
     private readonly refreshTokenModel: Model<RefreshToken>,
-    @Inject('ACCESS_TOKEN') private readonly accessJwtService: JwtService,
+    @Inject('ACCESS_JWT') private readonly accessJwtService: JwtService,
     @Inject('REFRESH_JWT') private readonly refreshJwtService: JwtService,
   ) {}
 

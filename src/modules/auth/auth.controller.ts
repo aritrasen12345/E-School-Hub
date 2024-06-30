@@ -6,7 +6,9 @@ import {
   LoginRequestDto,
   LoginResponseDto,
   RefreshAccessTokenRequestDto,
+  VerifySchoolRequestDto,
 } from './dtos';
+import { SchoolDocument } from 'src/common/types';
 
 @ApiTags('auth')
 @Controller('auth')
@@ -75,8 +77,10 @@ export class AuthController {
   })
   @ApiOkResponse({
     description: 'Refresh token deleted successfully!',
-    // type: String, // TODO
+    // type: String, //! TODO DEFINE TYPE
   })
+  //! TODO DEFINE RETURN TYPE
+  //! DEFINE TYPE FOR req
   async deleteRefreshToken(
     @Req() req,
     @Body() body: RefreshAccessTokenRequestDto,
@@ -96,5 +100,33 @@ export class AuthController {
         : 'Unable to delete refresh token!',
       data: {},
     };
+  }
+
+  // * VERIFY SCHOOL
+  @Post('verify_school')
+  @ApiOperation({
+    summary: 'Verify organization!',
+    operationId: 'verifySchool',
+  })
+  @ApiOkResponse({
+    description: 'Organisation verified successfully!',
+    // type: '' //! TODO DEFINE TYPE
+  })
+  //! TODO DEFINE RETURN TYPE
+  async verifySchool(
+    @Body() body: VerifySchoolRequestDto,
+  ): Promise<SchoolDocument> {
+    this.logger.debug('Inside verifySchool!');
+
+    const { token } = body;
+
+    const verifySchoolDetails = await this.authService.verifySchool(token);
+
+    return verifySchoolDetails;
+
+    // return {
+    //   message: 'Organization verified successfully, please login to continue!',
+    //   data: verifySchoolDetails,
+    // };
   }
 }

@@ -14,6 +14,7 @@ import { RefreshToken, School } from 'src/common/schemas';
 import { AuthHelper } from './helpers/auth.helper';
 import { SchoolDocument } from 'src/common/types';
 import { JwtService } from '@nestjs/jwt';
+import { AuthUtil } from './util/auth.util';
 
 @Injectable()
 export class AuthService {
@@ -24,7 +25,8 @@ export class AuthService {
     @InjectModel(RefreshToken.name)
     private readonly refreshTokenModel: Model<RefreshToken>,
     private readonly authHelper: AuthHelper,
-    @Inject('ACCESS_TOKEN') private readonly accessJwtService: JwtService,
+    @Inject('ACCESS_JWT') private readonly accessJwtService: JwtService,
+    private readonly authUtil: AuthUtil,
   ) {}
 
   // * METHOD FOR GENERATING ACCESS AND REFRESH TOKENS
@@ -132,5 +134,45 @@ export class AuthService {
     await foundToken.save();
 
     return { isSuccessful: true };
+  }
+
+  // * METHOD TO VERIFY SCHOOL
+  async verifySchool(token: string): Promise<SchoolDocument> {
+    this.logger.debug('Inside verifySchool!');
+
+    // * VERIFY THE TOKEN
+    const schoolId = await this.authUtil.verifySchoolJWT(token);
+
+    // * FIND UNVERIFIED SCHOOL USING TOKEN AND ID
+    const foundSchool = await this.schoolModel.findOne({
+      _id: schoolId,
+      verifyToken: token,
+      isVerified: false,
+    });
+
+    if (!foundSchool) {
+      throw new NotFoundException(
+        'Either incorrect email or the link is invalid',
+      );
+    }
+
+    /**
+     * IF THE SCHOOL IS FOUND THEN VERIFYING THE SCHOOL
+     * SETTING THE TOKEN TO EMPTY FOR ONE TIME USE
+     */
+    foundSchool.isVerified = true;
+    foundSchool.verifyToken = '';
+
+    // * UPDATE THE SCHOOL IN DB
+    const updatedSchool = await foundSchool.save();
+
+    // * IF THE SCHOOL NOT UPDATED PROPERLY
+    if (!updatedSchool) {
+      throw new UnauthorizedException(
+        'Cannot update school. Something went wrong!',
+      );
+    }
+
+    return updatedSchool;
   }
 }

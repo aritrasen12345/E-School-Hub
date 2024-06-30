@@ -1,17 +1,17 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsDefined, IsNotEmpty, IsString } from 'class-validator';
 
-export class RefreshAccessTokenRequestDto {
+export class VerifySchoolRequestDto {
   @ApiProperty({
     type: String,
     required: true,
-    description: 'Provide refreshToken!',
+    description: 'Provide token!',
     example: '', //! TODO PROVIDE EXAMPLE
   })
   @IsDefined()
   @IsString()
   @IsNotEmpty({
-    message: 'No refresh token attached!',
+    message: 'No token attached!',
   })
-  refreshToken: string;
+  token: string;
 }
