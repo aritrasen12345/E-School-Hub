@@ -9,6 +9,7 @@ import {
   VerifySchoolRequestDto,
 } from './dtos';
 import { SchoolDocument } from 'src/common/types';
+import { ApiResponse } from 'src/common/interfaces';
 
 @ApiTags('auth')
 @Controller('auth')
@@ -32,14 +33,17 @@ export class AuthController {
     @Req() req,
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     @Body() body: LoginRequestDto,
-  ): Promise<{ accessToken: string; refreshToken: string }> {
+  ): Promise<ApiResponse<{ accessToken: string; refreshToken: string }>> {
     this.logger.debug('Inside login!');
     const { accessToken, refreshToken } = await this.authService.generateToken(
       req.school.id,
       req.ip,
     );
 
-    return { accessToken, refreshToken };
+    return {
+      message: 'Successfully logged in user!',
+      data: { accessToken, refreshToken },
+    };
   }
 
   // * REFRESH ACCESS TOKEN
@@ -55,7 +59,7 @@ export class AuthController {
   async refreshAccessToken(
     @Req() req,
     @Body() body: RefreshAccessTokenRequestDto,
-  ): Promise<string> {
+  ): Promise<ApiResponse<string>> {
     this.logger.debug('Inside refreshAccessToken!');
 
     const { refreshToken } = body;
@@ -66,7 +70,10 @@ export class AuthController {
       req.ip,
     );
 
-    return accessToken;
+    return {
+      message: 'Access token generated successfully!',
+      data: accessToken,
+    };
   }
 
   // * DELETE REFRESH TOKEN
@@ -112,21 +119,18 @@ export class AuthController {
     description: 'Organisation verified successfully!',
     // type: '' //! TODO DEFINE TYPE
   })
-  //! TODO DEFINE RETURN TYPE
   async verifySchool(
     @Body() body: VerifySchoolRequestDto,
-  ): Promise<SchoolDocument> {
+  ): Promise<ApiResponse<SchoolDocument>> {
     this.logger.debug('Inside verifySchool!');
 
     const { token } = body;
 
     const verifySchoolDetails = await this.authService.verifySchool(token);
 
-    return verifySchoolDetails;
-
-    // return {
-    //   message: 'Organization verified successfully, please login to continue!',
-    //   data: verifySchoolDetails,
-    // };
+    return {
+      message: 'Organisation verified successfully!',
+      data: verifySchoolDetails,
+    };
   }
 }
