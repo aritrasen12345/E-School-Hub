@@ -1,8 +1,9 @@
 import { Body, Controller, Logger, Post } from '@nestjs/common';
 import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { SchoolService } from './school.service';
-import { CreateSchoolRequestDto } from './dtos';
+import { CreateSchoolRequestDto, GetSchoolRequestDto } from './dtos';
 import { ApiResponse } from 'src/common/interfaces';
+import { SchoolDocument } from 'src/common/types';
 
 @ApiTags('school')
 @Controller('school')
@@ -41,6 +42,30 @@ export class SchoolController {
         id: savedSchoolDetails?.id,
         email: savedSchoolDetails?.email,
       },
+    };
+  }
+
+  // * GET SCHOOL
+  @Post('/get_school')
+  @ApiOperation({
+    summary: 'Get school',
+    operationId: 'getSchool',
+  })
+  @ApiOkResponse({
+    description: 'School record found successfully!',
+    // type: '' //! TODO DEFINE TYPE
+  })
+  async getSchool(
+    @Body() body: GetSchoolRequestDto,
+  ): Promise<ApiResponse<SchoolDocument>> {
+    this.logger.debug('Inside getSchool!');
+
+    // * GET SCHOOL DETAILS
+    const getSchoolDetails = await this.schoolService.getSchool(body);
+
+    return {
+      message: 'School record found successfully!',
+      data: getSchoolDetails,
     };
   }
 }

@@ -7,7 +7,7 @@ import {
 } from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
 import { SchoolDocument } from 'src/common/types';
-import { CreateSchoolRequestDto } from './dtos';
+import { CreateSchoolRequestDto, GetSchoolRequestDto } from './dtos';
 import { InjectModel } from '@nestjs/mongoose';
 import { School } from 'src/common/schemas';
 import { Model } from 'mongoose';
@@ -102,5 +102,22 @@ export class SchoolService {
     }
 
     return createdSchool;
+  }
+
+  async getSchool(body: GetSchoolRequestDto): Promise<SchoolDocument> {
+    this.logger.debug('Inside getSchool!');
+
+    const { email } = body;
+
+    // * CHECKING IF THE SCHOOL IS AVAILABLE OR NOT
+    const isSchoolFound = await this.schoolModel.findOne({ email });
+
+    // * IF SCHOOL NOT FOUND
+    if (!isSchoolFound) {
+      throw new NotFoundException('This school is not found!');
+    }
+
+    // * IF SCHOOL FOUND
+    return isSchoolFound;
   }
 }
