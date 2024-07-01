@@ -11,6 +11,7 @@ import { APP_FILTER, APP_INTERCEPTOR } from '@nestjs/core';
 import { AllExceptionFilter } from './common/filters';
 import { ResponseInterceptor } from './common/interceptors';
 import { MailModule } from './modules/mail/mail.module';
+import { SchoolModule } from './modules/school/school.module';
 
 @Module({
   imports: [
@@ -34,6 +35,8 @@ import { MailModule } from './modules/mail/mail.module';
 
     // * IMPORT MAIL MODULE
     MailModule,
+
+    SchoolModule,
   ],
   controllers: [AppController],
   providers: [

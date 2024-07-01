@@ -21,8 +21,8 @@ import { MailModule } from '../mail/mail.module';
 @Module({
   imports: [
     // * IMPORT SCHOOL MONGOOSE MODULE
-    MongooseModule.forFeature([{ name: School.name, schema: SchoolSchema }]),
     MongooseModule.forFeature([
+      { name: School.name, schema: SchoolSchema },
       { name: RefreshToken.name, schema: RefreshTokenSchema },
     ]),
 

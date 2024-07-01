@@ -1,24 +1,24 @@
 import { ApiProperty } from '@nestjs/swagger';
 import {
   IsDefined,
+  IsEmail,
   IsNotEmpty,
   IsString,
   IsStrongPassword,
 } from 'class-validator';
 
-export class ResetPasswordRequestDto {
+export class CreateSchoolRequestDto {
   @ApiProperty({
     type: String,
     required: true,
-    description: 'Provide token!',
-    example: '', //! TODO PROVIDE EXAMPLE
+    description: 'School Email!',
+    example: 'john@email.com',
   })
   @IsDefined()
   @IsString()
-  @IsNotEmpty({
-    message: 'No token attached!',
-  })
-  token: string;
+  @IsNotEmpty()
+  @IsEmail()
+  email: string;
 
   @ApiProperty({
     type: String,
@@ -30,12 +30,12 @@ export class ResetPasswordRequestDto {
   @IsString()
   @IsNotEmpty()
   @IsStrongPassword()
-  newPassword: string;
+  password: string;
 
   @ApiProperty({
     type: String,
     required: true,
-    description: 'School password!',
+    description: 'User password!',
     example: 'Test@12345',
   })
   @IsDefined()
@@ -43,4 +43,15 @@ export class ResetPasswordRequestDto {
   @IsNotEmpty()
   @IsStrongPassword()
   confirmPassword: string;
+
+  @ApiProperty({
+    type: String,
+    required: true,
+    description: 'Provide school name!',
+    example: 'test schoolName',
+  })
+  @IsDefined()
+  @IsString()
+  @IsNotEmpty()
+  schoolName: string;
 }

@@ -1,4 +1,7 @@
-export const getForgetPasswordEmailTemplate = (schoolName, token) => {
+export const getForgetPasswordEmailTemplate = (
+  schoolName: string,
+  token: string,
+) => {
   const logoURL = `https://drive.google.com/file/d/1A86Wlc1FsBzavIiDPy_h_YlkHFUAdmvP/view?usp=sharing`;
   const authUrl = `${process.env.FRONTEND_BASE_URL}/reset_password/${token}`;
 
@@ -21,4 +24,69 @@ export const getForgetPasswordEmailTemplate = (schoolName, token) => {
       
         <p style="color: #eee; font-size: 16px; margin-top: 20px;">Best Regards,<br>DigiSchool Team</p>
       </div>`;
+};
+
+export const createSchoolTemplate = (schoolName: string, token: string) => {
+  const logoURL = `https://drive.google.com/file/d/1A86Wlc1FsBzavIiDPy_h_YlkHFUAdmvP/view?usp=sharing`;
+  const authUrl = `${process.env.FRONTEND_BASE_URL}/verify_school_email/${token}`;
+
+  return `<!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Welcome to DigiSchool</title>
+        <style>
+            body {
+                font-family: Arial, sans-serif;
+                margin: 0;
+                padding: 0;
+                background-color: #f4f4f4;
+            }
+    
+            .container {
+                max-width: 600px;
+                margin: 20px auto;
+                background-color: #ffffff;
+                padding: 20px;
+                border-radius: 5px;
+                box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            }
+    
+            h1 {
+                color: #333;
+            }
+    
+            p {
+                color: #555;
+            }
+    
+            .btn {
+                display: inline-block;
+                padding: 10px 20px;
+                margin: 15px 0;
+                text-decoration: none;
+                background-color: #007BFF;
+                color: #fff;
+                border-radius: 5px;
+            }
+        </style>
+    </head>
+    <body>
+    <div style="max-width: 600px; margin: 20px auto; padding: 20px; background: linear-gradient(135deg, #ff9ba8, #6d76e8); box-shadow: 0 0 20px rgba(0, 0, 0, 0.1); border-radius: 10px; font-family: 'Roboto', 'Arial', sans-serif; text-align: center; color: #fff;">
+      <div style="margin-bottom: 20px;">
+        <img src=${logoURL} alt="DigiSchool Logo" style="width: 150px; height: 150px; border-radius: 50%; border: 5px solid #6d76e8; object-fit: cover;">
+      </div>
+        <div class="container">
+            <h1>Welcome to DigiSchool!</h1>
+            <p>Dear Admin (${schoolName}),</p>
+            <p>We are excited to have you on board. Thank you for joining our platform. To get started, click the button below and verify your email Id:</p>
+    
+            <a href=${authUrl} class="btn">Verify</a>
+            
+            <p>Best regards,<br>Your DigiSchool Team</p>
+        </div>
+    </body>
+    </html>
+    `;
 };
