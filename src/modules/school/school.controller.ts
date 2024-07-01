@@ -1,7 +1,11 @@
 import { Body, Controller, Logger, Post } from '@nestjs/common';
 import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { SchoolService } from './school.service';
-import { CreateSchoolRequestDto, GetSchoolRequestDto } from './dtos';
+import {
+  CreateSchoolRequestDto,
+  GetSchoolRequestDto,
+  UpdateSchoolRequestDto,
+} from './dtos';
 import { ApiResponse } from 'src/common/interfaces';
 import { SchoolDocument } from 'src/common/types';
 
@@ -66,6 +70,38 @@ export class SchoolController {
     return {
       message: 'School record found successfully!',
       data: getSchoolDetails,
+    };
+  }
+
+  // * UPDATE SCHOOL
+  @Post('/update_school')
+  @ApiOperation({
+    summary: 'Update School',
+    operationId: 'updateSchool',
+  })
+  @ApiOkResponse({
+    description: 'School Updated successfully!',
+    // type: //! TODO DEFINE TYPE
+  })
+  async updateSchool(@Body() body: UpdateSchoolRequestDto): Promise<
+    ApiResponse<{
+      id: string;
+      email: string;
+      schoolName: string;
+    }>
+  > {
+    this.logger.debug('Inside updateSchool!');
+
+    // * UPDATE SCHOOL
+    const updatedFieldDetails = await this.schoolService.updateSchool(body);
+
+    return {
+      message: 'School Updated successfully!',
+      data: {
+        id: updatedFieldDetails?.id,
+        email: updatedFieldDetails?.email,
+        schoolName: updatedFieldDetails?.schoolName,
+      },
     };
   }
 }

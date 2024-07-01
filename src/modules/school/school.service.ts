@@ -7,7 +7,11 @@ import {
 } from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
 import { SchoolDocument } from 'src/common/types';
-import { CreateSchoolRequestDto, GetSchoolRequestDto } from './dtos';
+import {
+  CreateSchoolRequestDto,
+  GetSchoolRequestDto,
+  UpdateSchoolRequestDto,
+} from './dtos';
 import { InjectModel } from '@nestjs/mongoose';
 import { School } from 'src/common/schemas';
 import { Model } from 'mongoose';
@@ -104,6 +108,7 @@ export class SchoolService {
     return createdSchool;
   }
 
+  // * METHOD TO GET SCHOOL DETAILS
   async getSchool(body: GetSchoolRequestDto): Promise<SchoolDocument> {
     this.logger.debug('Inside getSchool!');
 
@@ -119,5 +124,29 @@ export class SchoolService {
 
     // * IF SCHOOL FOUND
     return isSchoolFound;
+  }
+
+  // * METHOD TO UPDATE SCHOOL DETAILS
+  async updateSchool(body: UpdateSchoolRequestDto): Promise<SchoolDocument> {
+    this.logger.debug('Inside updateSchool!');
+
+    const { schoolName, email } = body;
+
+    // * FIND SCHOOL WITH EMAIL
+    const foundSchool = await this.schoolModel.findOne({ email });
+
+    // * IF SCHOOL NOT FOUND
+    if (!foundSchool) {
+      throw new NotFoundException('School not found!');
+    }
+
+    // * UPDATE ALL THE PAYLOAD VALUES
+    foundSchool.email = email;
+    foundSchool.schoolName = schoolName;
+
+    // * SAVE THE UPDATED VALUES
+    const setUpdated = await foundSchool.save();
+
+    return setUpdated;
   }
 }
