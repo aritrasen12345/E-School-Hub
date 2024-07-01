@@ -19,6 +19,7 @@ import { AuthUtil } from './util/auth.util';
 import { getForgetPasswordEmailTemplate } from 'src/common/assets/email_template.asset';
 import { MailService } from '../mail/mail.service';
 import { ResetPasswordRequestDto } from './dtos';
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class AuthService {
@@ -34,6 +35,7 @@ export class AuthService {
     private readonly forgetPasswordJwtService: JwtService,
     private readonly authUtil: AuthUtil,
     private readonly mailService: MailService,
+    private readonly configService: ConfigService,
   ) {}
 
   // * METHOD FOR GENERATING ACCESS AND REFRESH TOKENS
@@ -258,7 +260,9 @@ export class AuthService {
     }
 
     // * VERIFY FORGET_PASSWORD
-    const verifyToken = await this.forgetPasswordJwtService.verifyAsync(token);
+    const verifyToken = await this.forgetPasswordJwtService.verifyAsync(token, {
+      secret: this.configService.get<string>('FORGET_PASSWORD_SECRET_KEY'),
+    });
 
     if (!verifyToken) {
       throw new UnauthorizedException('Invalid token!');

@@ -1,4 +1,5 @@
 import { Inject, Logger, UnauthorizedException } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 
 export class AuthUtil {
@@ -7,6 +8,7 @@ export class AuthUtil {
   constructor(
     @Inject('CREATED_SCHOOL_JWT') private createdSchoolJwtService: JwtService,
     @Inject('FORGET_PASSWORD_JWT') private forgetPasswordJwtService: JwtService,
+    private readonly configService: ConfigService,
   ) {}
 
   // * METHOD TO VERIFY SCHOOL TOKEN
@@ -14,8 +16,12 @@ export class AuthUtil {
     this.logger.debug('Inside verifySchoolJWT!');
 
     // * VERIFY THE TOKEN
-    const { id: schoolId } =
-      await this.createdSchoolJwtService.verifyAsync(token);
+    const { id: schoolId } = await this.createdSchoolJwtService.verifyAsync(
+      token,
+      {
+        secret: this.configService.get<string>('CREATED_SCHOOL_SECRET_KEY'),
+      },
+    );
 
     if (!schoolId) {
       throw new UnauthorizedException('Invalid link!');
@@ -29,8 +35,12 @@ export class AuthUtil {
     this.logger.debug('Inside verifyResetPasswordJWT!');
 
     // * VERIFY FORGET_PASSWORD
-    const { id: schoolId } =
-      await this.forgetPasswordJwtService.verifyAsync(token);
+    const { id: schoolId } = await this.forgetPasswordJwtService.verifyAsync(
+      token,
+      {
+        secret: this.configService.get<string>('FORGET_PASSWORD_SECRET_KEY'),
+      },
+    );
 
     if (!schoolId) {
       throw new UnauthorizedException('Invalid Link!');
