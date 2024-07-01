@@ -10,12 +10,12 @@ import { MailService } from './mail.service';
       imports: [ConfigModule],
       useFactory: async (configService: ConfigService) => ({
         transport: {
-          host: configService.get<string>('EMAIL_HOST'),
+          service: 'gmail',
           port: 465,
           secure: true,
           auth: {
-            user: configService.get<string>('EMAIL_USERID'),
-            pass: configService.get<string>('EMAIL_PWD'),
+            user: configService.get<string>('EMAIL_ID'),
+            pass: configService.get<string>('EMAIL_APP_PASSWORD'),
           },
         },
       }),
