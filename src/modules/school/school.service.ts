@@ -11,6 +11,7 @@ import { SchoolDocument } from 'src/common/types';
 import {
   ChangePasswordRequestDto,
   CreateSchoolRequestDto,
+  DeleteSchoolRequestDto,
   GetSchoolRequestDto,
   UpdateSchoolRequestDto,
 } from './dtos';
@@ -204,5 +205,42 @@ export class SchoolService {
     }
 
     return updatedSchool;
+  }
+
+  // * METHOD FOR DELETE SCHOOL
+  async deleteSchool(body: DeleteSchoolRequestDto) {
+    this.logger.debug('Inside deleteSchool!');
+
+    const { email, password } = body;
+
+    // * FIND THE SCHOOL BY EMAIL
+    const foundSchool = await this.schoolModel.findOne({ email });
+
+    // * IF THE SCHOOL NOT FOUND OR DELETED
+    if (!foundSchool || foundSchool.isDeleted === true) {
+      throw new NotFoundException('This school is not found!');
+    }
+
+    /**
+     * IF THE SCHOOL IS PRESENT THEN HASHING THE PASSWORD AND MATCHING WITH THE PASSWORD.
+     */
+    const isCorrectPassword = await bcrypt.compare(
+      password,
+      foundSchool.password,
+    );
+
+    // * IF THE PASSWORD DOESN'T MATCH
+    if (!isCorrectPassword) {
+      throw new UnauthorizedException('Incorrect Password!');
+    }
+
+    // * SET isDeleted TO TRUE OF THE SCHOOL IF THE PASSWORD IS CORRECT
+    foundSchool.isDeleted = true;
+
+    // * SAVE THE MODIFIED SCHOOL
+    const setIsDeleted = await foundSchool.save();
+
+    // * RETURN THE UPDATED SCHOOL
+    return setIsDeleted;
   }
 }

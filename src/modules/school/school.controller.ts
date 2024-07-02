@@ -4,6 +4,7 @@ import { SchoolService } from './school.service';
 import {
   ChangePasswordRequestDto,
   CreateSchoolRequestDto,
+  DeleteSchoolRequestDto,
   GetSchoolRequestDto,
   UpdateSchoolRequestDto,
 } from './dtos';
@@ -121,11 +122,43 @@ export class SchoolController {
     this.logger.debug('Inside changePassword!');
 
     // * CHANGE PASSWORD SERVICE
-    const updatedFieldDetails = await this.schoolService.changePassword(body);
+    await this.schoolService.changePassword(body);
 
     return {
       message: 'Password changed successfully!',
       data: [],
+    };
+  }
+
+  // * DELETE SCHOOL
+  @Post('/delete_school')
+  @ApiOperation({
+    summary: 'Delete school!',
+    operationId: 'deleteSchool',
+  })
+  @ApiOkResponse({
+    description: 'School deleted successfully!',
+    // type: '' //! TODO DEFINE TYPE
+  })
+  async deleteSchool(@Body() body: DeleteSchoolRequestDto): Promise<
+    ApiResponse<{
+      id: string;
+      email: string;
+      isDeleted: boolean;
+    }>
+  > {
+    this.logger.debug('Inside deleteSchool!');
+
+    // * DELETE SCHOOL
+    const deletedSchool = await this.schoolService.deleteSchool(body);
+
+    return {
+      message: 'School deleted successfully!',
+      data: {
+        id: deletedSchool?.id,
+        email: deletedSchool?.email,
+        isDeleted: deletedSchool?.isDeleted,
+      },
     };
   }
 }
