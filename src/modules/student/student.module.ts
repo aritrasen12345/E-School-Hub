@@ -13,7 +13,7 @@ import { Student, StudentSchema } from 'src/common/schemas';
       },
     ]),
   ],
-  providers: [StudentService],
   controllers: [StudentController],
+  providers: [StudentService],
 })
 export class StudentModule {}

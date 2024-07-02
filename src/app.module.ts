@@ -12,31 +12,36 @@ import { AllExceptionFilter } from './common/filters';
 import { ResponseInterceptor } from './common/interceptors';
 import { MailModule } from './modules/mail/mail.module';
 import { SchoolModule } from './modules/school/school.module';
+import { StandardModule } from './modules/section/standard.module';
 
 @Module({
   imports: [
-    // * Import config module
+    // * IMPORT CONFIG MODULE
     ConfigModule.forRoot({
       envFilePath: '.env',
       isGlobal: true,
     }),
 
-    // * Import Mongoose Module
+    // * IMPORT MONGOOSE MODULE
     MongooseModule.forRootAsync(mongooseAsyncConfig),
 
-    // * Import TaskModule
+    // * IMPORT TASK MODULE
     TasksModule,
 
-    // * Import custom module
+    // * IMPORT CUSTOM MODULE
     StudentModule,
 
-    // * Import Auth module
+    // * IMPORT AUTH MODULE
     AuthModule,
 
     // * IMPORT MAIL MODULE
     MailModule,
 
+    // * IMPORT SCHOOL MODULE
     SchoolModule,
+
+    // * IMPORT STANDARD MODULE
+    StandardModule,
   ],
   controllers: [AppController],
   providers: [
