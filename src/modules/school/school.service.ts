@@ -4,10 +4,12 @@ import {
   Injectable,
   Logger,
   NotFoundException,
+  UnauthorizedException,
 } from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
 import { SchoolDocument } from 'src/common/types';
 import {
+  ChangePasswordRequestDto,
   CreateSchoolRequestDto,
   GetSchoolRequestDto,
   UpdateSchoolRequestDto,
@@ -148,5 +150,59 @@ export class SchoolService {
     const setUpdated = await foundSchool.save();
 
     return setUpdated;
+  }
+
+  // * METHOD FOR CHANGE PASSWORD
+  async changePassword(body: ChangePasswordRequestDto) {
+    this.logger.debug('Inside changePassword!');
+    const { schoolId, old_password, new_password, confirm_password } = body;
+
+    // * FIND SCHOOL BY ID
+    const foundSchool = await this.schoolModel.findById(schoolId);
+
+    // * IF SCHOOL NOT FOUND OR DELETED THROW ERROR
+    if (!foundSchool || foundSchool.isDeleted === true) {
+      throw new NotFoundException('School not found or deleted!');
+    }
+
+    /**
+     * IF THE SCHOOL IS PRESENT THEN HASHING THE PASSWORD AND MATCHING WITH THE DB'S PASSWORD
+     */
+    const isCorrectPassword = await bcrypt.compare(
+      old_password,
+      foundSchool.password,
+    );
+
+    // * IF PASSWORD IS WRONG
+    if (!isCorrectPassword) {
+      throw new UnauthorizedException(
+        `This password doesn't match with previous password`,
+      );
+    }
+
+    // * CHECK WHETHER NEW_PASSWORD AND CONFIRM_PASSWORD ARE SAME
+    if (new_password !== confirm_password) {
+      throw new BadRequestException(
+        `This new password doesn't match with confirm password!`,
+      );
+    }
+
+    // * HASH THE PASSWORD
+    const salt = await bcrypt.genSalt();
+    const hashedNewPassword = await bcrypt.hash(new_password, salt);
+
+    // * SAVE THE NEW PASSWORD INTO DB
+    foundSchool.password = hashedNewPassword;
+
+    const updatedSchool = await foundSchool.save();
+
+    // * IF NOT UPDATE PROPERLY THROW ERROR
+    if (!updatedSchool) {
+      throw new BadRequestException(
+        `Cannot update school. Something went wrong!`,
+      );
+    }
+
+    return updatedSchool;
   }
 }

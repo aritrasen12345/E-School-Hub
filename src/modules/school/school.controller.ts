@@ -1,13 +1,15 @@
-import { Body, Controller, Logger, Post } from '@nestjs/common';
+import { Body, Controller, Logger, Post, UseGuards } from '@nestjs/common';
 import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { SchoolService } from './school.service';
 import {
+  ChangePasswordRequestDto,
   CreateSchoolRequestDto,
   GetSchoolRequestDto,
   UpdateSchoolRequestDto,
 } from './dtos';
 import { ApiResponse } from 'src/common/interfaces';
 import { SchoolDocument } from 'src/common/types';
+import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 
 @ApiTags('school')
 @Controller('school')
@@ -102,6 +104,28 @@ export class SchoolController {
         email: updatedFieldDetails?.email,
         schoolName: updatedFieldDetails?.schoolName,
       },
+    };
+  }
+
+  // * CHANGE PASSWORD
+  @Post('/change_password')
+  @UseGuards(JwtAuthGuard)
+  @ApiOperation({ summary: 'Change Password', operationId: 'changePassword' })
+  @ApiOkResponse({
+    description: 'Password changed successfully!',
+    // type: '' //! TODO DEFINE TYPE
+  })
+  async changePassword(
+    @Body() body: ChangePasswordRequestDto,
+  ): Promise<ApiResponse<[]>> {
+    this.logger.debug('Inside changePassword!');
+
+    // * CHANGE PASSWORD SERVICE
+    const updatedFieldDetails = await this.schoolService.changePassword(body);
+
+    return {
+      message: 'Password changed successfully!',
+      data: [],
     };
   }
 }
