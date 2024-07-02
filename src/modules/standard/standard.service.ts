@@ -8,7 +8,11 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { Standard } from 'src/common/schemas';
 import { StandardDocument } from 'src/common/types';
-import { Section, UpdateStandardRequestDto } from './dtos';
+import {
+  DeleteStandardRequestDto,
+  Section,
+  UpdateStandardRequestDto,
+} from './dtos';
 
 @Injectable()
 export class StandardService {
@@ -108,5 +112,31 @@ export class StandardService {
 
     // * RETURN THE UPDATED SECTION
     return setUpdated;
+  }
+
+  // * METHOD TO DELETE STANDARD
+  async deleteStandard(
+    body: DeleteStandardRequestDto,
+  ): Promise<StandardDocument> {
+    this.logger.debug('Inside deleteStandard!');
+
+    const { standard_id } = body;
+
+    // * FIND STANDARD
+    const foundStandard = await this.standardModel.findById(standard_id);
+
+    // * IF STANDARD NOT FOUND THROW ERROR
+    if (!foundStandard || foundStandard.isDeleted === true) {
+      throw new NotFoundException('Standard not found!');
+    }
+
+    // * IF FOUND SET isDeleted = true
+    foundStandard.isDeleted = true;
+
+    // * SAVE THE MODIFIED STANDARD
+    const setStandardDeleted = await foundStandard.save();
+
+    // * RETURN THE STANDARD
+    return setStandardDeleted;
   }
 }

@@ -4,6 +4,7 @@ import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import {
   CreateStandardRequestDto,
+  DeleteStandardRequestDto,
   GetStandardsListRequestDto,
   UpdateStandardRequestDto,
 } from './dtos';
@@ -93,6 +94,31 @@ export class StandardController {
 
     return {
       message: 'Standard updated successfully!',
+      data: standardDetails,
+    };
+  }
+
+  // * DELETE STANDARD
+  @Post('/delete_standard')
+  @UseGuards(JwtAuthGuard)
+  @ApiOperation({
+    summary: 'Delete standard',
+    operationId: 'deleteStandard',
+  })
+  @ApiOkResponse({
+    description: 'Standard deleted successfully!',
+    // type: //! TODO DEFINE TYPE
+  })
+  async deleteStandard(
+    @Body() body: DeleteStandardRequestDto,
+  ): Promise<ApiResponse<StandardDocument>> {
+    this.logger.debug('Inside deleteStandard!');
+
+    // * DELETE STANDARD DETAILS
+    const standardDetails = await this.standardService.deleteStandard(body);
+
+    return {
+      message: 'Standard deleted successfully!',
       data: standardDetails,
     };
   }
