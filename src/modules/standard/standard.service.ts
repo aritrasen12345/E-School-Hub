@@ -8,7 +8,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { Standard } from 'src/common/schemas';
 import { StandardDocument } from 'src/common/types';
-import { Section } from './dtos';
+import { Section, UpdateStandardRequestDto } from './dtos';
 
 @Injectable()
 export class StandardService {
@@ -74,5 +74,39 @@ export class StandardService {
 
     // * RETURN STANDARDS
     return isStandardFound;
+  }
+
+  // * METHOD TO UPDATE STANDARDS OF SCHOOL
+  async updateStandard(
+    body: UpdateStandardRequestDto,
+  ): Promise<StandardDocument> {
+    this.logger.debug('Inside updateStandard!');
+    const { standard_id, standard_name, sections, schoolId } = body;
+
+    // * CHECKING IF THE STANDARD IS AVAILABLE OR NOT
+    const isStandardFound = await this.standardModel.findOne({
+      schoolId,
+      _id: standard_id,
+    });
+
+    // * IF STANDARD NOT FOUND
+    if (!isStandardFound) {
+      throw new NotFoundException('No standard found!');
+    }
+
+    // * UPDATE THE STANDARD'S PROPERTIES
+    const setUpdated = await this.standardModel.findOneAndUpdate(
+      { schoolId, _id: standard_id },
+      { sections, standard_name },
+      { new: true },
+    );
+
+    // * IF UNABLE TO UPDATE
+    if (!setUpdated) {
+      throw new BadRequestException('Unable to update standard!');
+    }
+
+    // * RETURN THE UPDATED SECTION
+    return setUpdated;
   }
 }

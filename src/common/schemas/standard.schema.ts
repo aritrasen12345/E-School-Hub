@@ -36,7 +36,7 @@ export class Standard extends Document {
   school?: School;
 
   @Prop({
-    type: SectionSchema,
+    type: [SectionSchema],
     required: true,
   })
   sections: Section[];

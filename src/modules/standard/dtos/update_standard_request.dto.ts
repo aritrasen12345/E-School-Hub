@@ -11,7 +11,7 @@ import {
 } from 'class-validator';
 import { Section } from './section.dto';
 
-export class CreateStandardRequestDto {
+export class UpdateStandardRequestDto {
   @ApiProperty({
     type: String,
     required: true,
@@ -22,6 +22,17 @@ export class CreateStandardRequestDto {
   @IsNotEmpty({ message: 'No school ID was passed!' })
   @IsMongoId()
   schoolId: string;
+
+  @ApiProperty({
+    type: String,
+    required: true,
+    example: '65f1949c663d830ca74c5364',
+  })
+  @IsDefined()
+  @IsString()
+  @IsNotEmpty()
+  @IsMongoId()
+  standard_id: string;
 
   @ApiProperty({
     type: String,

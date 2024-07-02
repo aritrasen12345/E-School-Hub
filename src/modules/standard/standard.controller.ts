@@ -2,7 +2,11 @@ import { Body, Controller, Logger, Post, UseGuards } from '@nestjs/common';
 import { StandardService } from './standard.service';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
-import { CreateStandardRequestDto, GetStandardsListRequestDto } from './dtos';
+import {
+  CreateStandardRequestDto,
+  GetStandardsListRequestDto,
+  UpdateStandardRequestDto,
+} from './dtos';
 import { ApiResponse } from 'src/common/interfaces';
 import { StandardDocument } from 'src/common/types';
 
@@ -66,5 +70,30 @@ export class StandardController {
     );
 
     return { message: 'Standard found successfully', data: standardDetails };
+  }
+
+  // * UPDATE STANDARD
+  @Post('/update_standard')
+  @UseGuards(JwtAuthGuard)
+  @ApiOperation({
+    summary: 'Update standard',
+    operationId: 'updateStandard',
+  })
+  @ApiOkResponse({
+    description: 'Standard updated successfully!',
+    // type: '' //! TODO DEFINE TYPE
+  })
+  async updateStandard(
+    @Body() body: UpdateStandardRequestDto,
+  ): Promise<ApiResponse<StandardDocument>> {
+    this.logger.debug('Inside updateStandard!');
+
+    // * UPDATE STANDARD
+    const standardDetails = await this.standardService.updateStandard(body);
+
+    return {
+      message: 'Standard updated successfully!',
+      data: standardDetails,
+    };
   }
 }
