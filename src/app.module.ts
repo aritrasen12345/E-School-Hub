@@ -12,7 +12,7 @@ import { AllExceptionFilter } from './common/filters';
 import { ResponseInterceptor } from './common/interceptors';
 import { MailModule } from './modules/mail/mail.module';
 import { SchoolModule } from './modules/school/school.module';
-import { StandardModule } from './modules/section/standard.module';
+import { StandardModule } from './modules/standard/standard.module';
 
 @Module({
   imports: [
