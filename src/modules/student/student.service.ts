@@ -7,6 +7,7 @@ import {
 import {
   CreateStudentRequestDto,
   DeleteStudentRequestDto,
+  DownloadStudentDataRequestDto,
   GetStudentRequestDto,
   GetStudentsBySchoolRequestDto,
   UpdateStudentRequestDto,
@@ -16,6 +17,20 @@ import { School, Student } from 'src/common/schemas';
 import { Model } from 'mongoose';
 import { SchoolService } from '../school/school.service';
 import { StudentDocument } from 'src/common/types';
+import { parse } from 'json2csv';
+
+const json2csv = parse;
+
+const CSV_FIELDS = [
+  'name',
+  'parentName',
+  'gender',
+  'standard',
+  'roll',
+  'mobileNo',
+  'address',
+  'bloodGroup',
+];
 
 @Injectable()
 export class StudentService {
@@ -278,5 +293,31 @@ export class StudentService {
 
     // * RETURN THE DELETED STUDENT
     return deletedStudent;
+  }
+
+  // * METHOD TO GET STUDENTS DATA IN CSV
+  async getStudentsDetailsCSV(body: DownloadStudentDataRequestDto) {
+    this.logger.debug('Inside getStudentsDetailsCSV!');
+
+    const { limit, schoolId } = body;
+
+    // * GET STUDENTS WITH THE PROVIDED SCHOOL ID
+    const studentDetails = await this.studentModel
+      .find({
+        schoolId,
+        isDeleted: false,
+      })
+      .limit(limit);
+
+    // IF NO STUDENTS FOUND
+    if (!studentDetails || studentDetails.length === 0) {
+      throw new NotFoundException('No students found!');
+    }
+
+    // CONVERT STUDENTS DATA INTO CSV FILE
+    const csvData = json2csv(studentDetails, { fields: CSV_FIELDS });
+
+    // * RETURN THE PARSE DATA
+    return csvData;
   }
 }

@@ -1,4 +1,12 @@
-import { Body, Controller, Get, Logger, Post, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Logger,
+  Post,
+  Res,
+  UseGuards,
+} from '@nestjs/common';
 import { StudentService } from './student.service';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
@@ -7,10 +15,12 @@ import { ApiResponse } from 'src/common/interfaces';
 import {
   CreateStudentRequestDto,
   DeleteStudentRequestDto,
+  DownloadStudentDataRequestDto,
   GetStudentRequestDto,
   UpdateStudentRequestDto,
 } from './dtos';
 import { GetStudentsBySchoolRequestDto } from './dtos/get_students_by_school_request.dto';
+import { Response } from 'express';
 
 @ApiTags('student')
 @Controller('student')
@@ -181,5 +191,36 @@ export class StudentController {
         isDeleted: deletedStudent?.isDeleted,
       },
     };
+  }
+
+  @Post('/download_student_data')
+  @UseGuards(JwtAuthGuard)
+  @ApiOperation({
+    summary: 'Download student data',
+    operationId: 'downloadStudentData',
+  })
+  @ApiOkResponse({
+    description: 'Successfully downloaded student data!',
+    // type: '' //! TODO DEFINE TYPE
+  })
+  async downloadStudentData(
+    @Body() body: DownloadStudentDataRequestDto,
+    @Res() res: Response,
+  ) {
+    this.logger.debug('Inside downloadStudentData!');
+
+    // * GET CSV DATA
+    const csvData = await this.studentService.getStudentsDetailsCSV(body);
+
+    /**
+     * THESE HEADERS ARE REQUIRED TO INDICATE THE FRONTEND THAT THE API WILL RETURN BLOB DATA
+     */
+    res.setHeader('Content-Type', 'text/csv');
+    res.setHeader(
+      'Content-Disposition',
+      'attachment; filename=student_data.csv',
+    );
+
+    res.status(200).send(csvData);
   }
 }
