@@ -4,7 +4,11 @@ import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { StudentDocument } from 'src/common/types';
 import { ApiResponse } from 'src/common/interfaces';
-import { CreateStudentRequestDto, GetStudentRequestDto } from './dtos';
+import {
+  CreateStudentRequestDto,
+  GetStudentRequestDto,
+  UpdateStudentRequestDto,
+} from './dtos';
 import { GetStudentsBySchoolRequestDto } from './dtos/get_students_by_school_request.dto';
 
 @ApiTags('student')
@@ -103,6 +107,47 @@ export class StudentController {
     return {
       message: 'Successfully fetched student!',
       data: foundStudent,
+    };
+  }
+
+  // * UPDATE STUDENT
+  @Post('/update_student')
+  @UseGuards(JwtAuthGuard)
+  @ApiOperation({
+    summary: 'Update student',
+    operationId: 'updateStudent',
+  })
+  @ApiOkResponse({
+    description: 'Student updated successfully!',
+    // type: '' //! TODO DEFINE TYPE
+  })
+  async updateStudent(@Body() body: UpdateStudentRequestDto): Promise<
+    ApiResponse<{
+      name: string;
+      parentName: string;
+      standard: string;
+      section: string;
+      roll: string;
+      mobileNo: string;
+      address: string;
+    }>
+  > {
+    this.logger.debug('Inside updateStudent!');
+
+    // * UPDATE STUDENT
+    const modifiedStudent = await this.studentService.updateStudent(body);
+
+    return {
+      message: 'Student updated successfully!',
+      data: {
+        name: modifiedStudent?.name,
+        parentName: modifiedStudent?.parentName,
+        standard: modifiedStudent?.standard,
+        section: modifiedStudent?.section,
+        roll: modifiedStudent?.roll,
+        mobileNo: modifiedStudent?.mobileNo,
+        address: modifiedStudent?.address,
+      },
     };
   }
 }

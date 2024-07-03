@@ -8,6 +8,7 @@ import {
   CreateStudentRequestDto,
   GetStudentRequestDto,
   GetStudentsBySchoolRequestDto,
+  UpdateStudentRequestDto,
 } from './dtos';
 import { InjectModel } from '@nestjs/mongoose';
 import { Student } from 'src/common/schemas';
@@ -169,5 +170,74 @@ export class StudentService {
     }
 
     return foundStudent;
+  }
+
+  // * METHOD TO UPDATE STUDENT
+  async updateStudent(body: UpdateStudentRequestDto): Promise<StudentDocument> {
+    this.logger.debug('Inside updateStudent!');
+
+    const {
+      standard,
+      section,
+      roll,
+      schoolId,
+      nameToUpdate,
+      parentNameToUpdate,
+      standardToUpdate,
+      sectionToUpdate,
+      rollToUpdate,
+      mobileNoToUpdate,
+      addressToUpdate,
+      bloodGroupToUpdate,
+      genderToUpdate,
+    } = body;
+
+    // * CHECKING A SINGLE STUDENT THAT WILL BE UPDATED
+    const foundStudent = await this.studentModel.findOne({
+      schoolId,
+      standard,
+      section,
+      roll,
+    });
+
+    // * IF NO STUDENT FOUND
+    if (!foundStudent) {
+      throw new NotFoundException('No student found!');
+    }
+
+    // * CHECK IF THERE IS ANY STUDENT WITH THE UPDATED VALUE
+    const isDuplicateStudent = await this.studentModel.findOne({
+      name: nameToUpdate,
+      parentName: parentNameToUpdate,
+      standard: standardToUpdate,
+      section: sectionToUpdate,
+      roll: rollToUpdate,
+      mobileNo: mobileNoToUpdate,
+      address: addressToUpdate,
+      bloodGroup: bloodGroupToUpdate,
+      gender: genderToUpdate,
+      schoolId,
+    });
+
+    if (isDuplicateStudent) {
+      throw new NotFoundException('This student is already been admitted!');
+    }
+
+    // * UPDATE THE STUDENT'S PROPERTIES
+    foundStudent.name = nameToUpdate;
+    foundStudent.parentName = parentNameToUpdate;
+    foundStudent.standard = standardToUpdate;
+    foundStudent.section = sectionToUpdate;
+    foundStudent.roll = rollToUpdate;
+    foundStudent.mobileNo = mobileNoToUpdate;
+    foundStudent.address = addressToUpdate;
+    foundStudent.bloodGroup = bloodGroupToUpdate;
+    foundStudent.gender = genderToUpdate;
+
+    // * SAVE THE UPDATED STUDENT
+    const updatedStudent = await foundStudent.save();
+
+    // * RETURN THE UPDATED STUDENT
+    return updatedStudent;
   }
 }

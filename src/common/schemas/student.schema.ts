@@ -55,7 +55,7 @@ export class Student extends Document {
     type: String,
     required: true,
   })
-  section: true;
+  section: string;
 
   @Prop({
     type: String,
