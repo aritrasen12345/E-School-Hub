@@ -243,4 +243,10 @@ export class SchoolService {
     // * RETURN THE UPDATED SCHOOL
     return setIsDeleted;
   }
+
+  // * METHOD TO FIND SCHOOL BY ID
+  async getSchoolById(schoolId: string): Promise<SchoolDocument> {
+    this.logger.debug('Inside getSchoolById!');
+    return this.schoolModel.findById(schoolId);
+  }
 }

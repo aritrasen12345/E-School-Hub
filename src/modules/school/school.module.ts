@@ -38,5 +38,6 @@ import { MailModule } from '../mail/mail.module';
       inject: [JwtService],
     },
   ],
+  exports: [SchoolService],
 })
 export class SchoolModule {}
