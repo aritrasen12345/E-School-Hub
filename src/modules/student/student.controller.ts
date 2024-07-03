@@ -6,6 +6,7 @@ import { StudentDocument } from 'src/common/types';
 import { ApiResponse } from 'src/common/interfaces';
 import {
   CreateStudentRequestDto,
+  DeleteStudentRequestDto,
   GetStudentRequestDto,
   UpdateStudentRequestDto,
 } from './dtos';
@@ -147,6 +148,37 @@ export class StudentController {
         roll: modifiedStudent?.roll,
         mobileNo: modifiedStudent?.mobileNo,
         address: modifiedStudent?.address,
+      },
+    };
+  }
+
+  // * DELETE STUDENT
+  @Post('/delete_student')
+  @ApiOperation({ summary: 'Delete student!', operationId: 'deleteStudent' })
+  @ApiOkResponse({
+    description: 'Student deleted successfully!',
+    // type: '' //! TODO DEFINE TYPE
+  })
+  async deleteStudent(@Body() body: DeleteStudentRequestDto): Promise<
+    ApiResponse<{
+      name: string;
+      class: string;
+      id: string;
+      isDeleted: boolean;
+    }>
+  > {
+    this.logger.debug('Inside deleteStudent!');
+
+    // * DELETE STUDENT
+    const deletedStudent = await this.studentService.deleteStudent(body);
+
+    return {
+      message: 'Student deleted successfully!',
+      data: {
+        name: deletedStudent?.name,
+        class: deletedStudent?.standard,
+        id: deletedStudent?.id,
+        isDeleted: deletedStudent?.isDeleted,
       },
     };
   }

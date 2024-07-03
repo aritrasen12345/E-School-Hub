@@ -6,12 +6,13 @@ import {
 } from '@nestjs/common';
 import {
   CreateStudentRequestDto,
+  DeleteStudentRequestDto,
   GetStudentRequestDto,
   GetStudentsBySchoolRequestDto,
   UpdateStudentRequestDto,
 } from './dtos';
 import { InjectModel } from '@nestjs/mongoose';
-import { Student } from 'src/common/schemas';
+import { School, Student } from 'src/common/schemas';
 import { Model } from 'mongoose';
 import { SchoolService } from '../school/school.service';
 import { StudentDocument } from 'src/common/types';
@@ -22,6 +23,7 @@ export class StudentService {
 
   constructor(
     @InjectModel(Student.name) private readonly studentModel: Model<Student>,
+    @InjectModel(School.name) private readonly schoolModel: Model<School>,
     private readonly schoolService: SchoolService,
   ) {}
 
@@ -239,5 +241,42 @@ export class StudentService {
 
     // * RETURN THE UPDATED STUDENT
     return updatedStudent;
+  }
+
+  // * METHOD TO DELETE STUDENT
+  async deleteStudent(body: DeleteStudentRequestDto): Promise<StudentDocument> {
+    this.logger.debug('Inside deleteStudent!');
+
+    const { standard, section, roll, email } = body;
+
+    // * CHECK IF SCHOOL EXITS
+    const foundSchool = await this.schoolModel.findOne({ email });
+
+    // * IF SCHOOL WITH THIS EMAIL NOT FOUND
+    if (!foundSchool) {
+      throw new NotFoundException('There is no school with this email!');
+    }
+
+    // * CHECKING A SINGLE STUDENT FROM DB
+    const foundStudent = await this.studentModel.findOne({
+      schoolId: foundSchool._id,
+      standard,
+      section,
+      roll,
+    });
+
+    // * IF NO STUDENTS ARE FOUND THROW ERROR
+    if (!foundStudent || foundStudent.isDeleted === true) {
+      throw new NotFoundException('No student found!');
+    }
+
+    // * AS THE STUDENT IS PRESENT NOW SETTING isDeleted to true
+    foundStudent.isDeleted = true;
+
+    // * SAVE THE STUDENT
+    const deletedStudent = await foundStudent.save();
+
+    // * RETURN THE DELETED STUDENT
+    return deletedStudent;
   }
 }
