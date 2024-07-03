@@ -4,14 +4,16 @@ import {
   Logger,
   NotFoundException,
 } from '@nestjs/common';
-import { CreateStudentRequestDto } from './dtos';
+import {
+  CreateStudentRequestDto,
+  GetStudentRequestDto,
+  GetStudentsBySchoolRequestDto,
+} from './dtos';
 import { InjectModel } from '@nestjs/mongoose';
 import { Student } from 'src/common/schemas';
 import { Model } from 'mongoose';
 import { SchoolService } from '../school/school.service';
-import { GetStudentsBySchoolRequestDto } from './dtos/get_students_by_school_request.dto';
 import { StudentDocument } from 'src/common/types';
-import { query } from 'express';
 
 @Injectable()
 export class StudentService {
@@ -145,5 +147,27 @@ export class StudentService {
     const countStudents = await this.studentModel.countDocuments(findQuery);
 
     return { studentList: foundStudents, countStudents };
+  }
+
+  // * METHOD TO GET STUDENT
+  async getStudent(body: GetStudentRequestDto): Promise<StudentDocument> {
+    this.logger.debug('Inside getStudent!');
+
+    const { standard, section, roll, schoolId } = body;
+
+    // * CHECKING A SINGLE STUDENT FROM DB
+    const foundStudent = await this.studentModel.findOne({
+      schoolId,
+      standard,
+      section,
+      roll,
+    });
+
+    // * IF STUDENT NOT FOUND
+    if (!foundStudent) {
+      throw new NotFoundException('No student found!');
+    }
+
+    return foundStudent;
   }
 }

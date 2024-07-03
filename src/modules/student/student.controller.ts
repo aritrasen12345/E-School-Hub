@@ -4,7 +4,7 @@ import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { StudentDocument } from 'src/common/types';
 import { ApiResponse } from 'src/common/interfaces';
-import { CreateStudentRequestDto } from './dtos';
+import { CreateStudentRequestDto, GetStudentRequestDto } from './dtos';
 import { GetStudentsBySchoolRequestDto } from './dtos/get_students_by_school_request.dto';
 
 @ApiTags('student')
@@ -80,5 +80,29 @@ export class StudentController {
     const foundStudents = await this.studentService.getStudentsBySchool(body);
 
     return { message: 'Students found!', data: foundStudents };
+  }
+
+  // * GET STUDENT
+  @Post('/get_student')
+  @ApiOperation({
+    summary: 'Get student',
+    operationId: 'getStudent',
+  })
+  @ApiOkResponse({
+    description: 'Successfully fetched student!',
+    // type: '' //! TODO DEFINE TYPE
+  })
+  async getStudent(
+    @Body() body: GetStudentRequestDto,
+  ): Promise<ApiResponse<StudentDocument>> {
+    this.logger.debug('Inside getStudent!');
+
+    // * FIND STUDENT
+    const foundStudent = await this.studentService.getStudent(body);
+
+    return {
+      message: 'Successfully fetched student!',
+      data: foundStudent,
+    };
   }
 }
