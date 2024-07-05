@@ -12,8 +12,7 @@ export class TasksService {
     private readonly configService: ConfigService,
   ) {}
 
-  // @Cron('*/14 * * * *')
-  //   @Cron('45 * * * * *')
+  @Cron('0 */6 * * *')
   async handleCron() {
     this.logger.debug('Called when the current second is 45');
     const response = await this.httpService.axiosRef.get<string>(
