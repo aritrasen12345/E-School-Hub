@@ -12,6 +12,7 @@ import {
 } from './dtos';
 import { SchoolDocument } from 'src/common/types';
 import { ApiResponse } from 'src/common/interfaces';
+import { SchoolResponseDto } from '../school/dtos';
 
 @ApiTags('auth')
 @Controller('auth')
@@ -37,8 +38,9 @@ export class AuthController {
     @Body() body: LoginRequestDto,
   ): Promise<ApiResponse<{ accessToken: string; refreshToken: string }>> {
     this.logger.debug('Inside login!');
+
     const { accessToken, refreshToken } = await this.authService.generateToken(
-      req.school.id,
+      req.user.id,
       req.ip,
     );
 
@@ -119,7 +121,7 @@ export class AuthController {
   })
   @ApiOkResponse({
     description: 'Organisation verified successfully!',
-    // type: '' //! TODO DEFINE TYPE
+    type: SchoolResponseDto,
   })
   async verifySchool(
     @Body() body: VerifySchoolRequestDto,
@@ -131,7 +133,7 @@ export class AuthController {
     const verifySchoolDetails = await this.authService.verifySchool(token);
 
     return {
-      message: 'Organisation verified successfully!',
+      message: 'Organization verified successfully!',
       data: verifySchoolDetails,
     };
   }
