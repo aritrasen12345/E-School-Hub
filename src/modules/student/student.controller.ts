@@ -164,7 +164,10 @@ export class StudentController {
 
   // * DELETE STUDENT
   @Post('/delete_student')
-  @ApiOperation({ summary: 'Delete student!', operationId: 'deleteStudent' })
+  @ApiOperation({
+    summary: 'Delete student',
+    operationId: 'deleteStudent',
+  })
   @ApiOkResponse({
     description: 'Student deleted successfully!',
     // type: '' //! TODO DEFINE TYPE
@@ -201,7 +204,6 @@ export class StudentController {
   })
   @ApiOkResponse({
     description: 'Successfully downloaded student data!',
-    // type: '' //! TODO DEFINE TYPE
   })
   async downloadStudentData(
     @Body() body: DownloadStudentDataRequestDto,

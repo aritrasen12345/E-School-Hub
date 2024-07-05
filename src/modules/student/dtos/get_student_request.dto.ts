@@ -48,7 +48,7 @@ export class GetStudentRequestDto {
     type: String,
     required: true,
     description: 'Provide student schoolId!',
-    example: 'test student schoolId',
+    example: '6687a4a0269f9762fe0c5e69',
   })
   @IsDefined()
   @IsString()
