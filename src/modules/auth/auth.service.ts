@@ -61,10 +61,12 @@ export class AuthService {
     this.logger.debug('Inside validateSchoolCredentials!');
 
     // * FIRST CHECKING WHETHER THE SCHOOL IS REGISTERED OR NOT
-    const foundSchool = await this.schoolModel.findOne({
-      email,
-      isVerified: true,
-    });
+    const foundSchool = await this.schoolModel
+      .findOne({
+        email,
+        isVerified: true,
+      })
+      .select('+password');
 
     // * IF SCHOOL IS NOT FOUND
     if (!foundSchool) {
