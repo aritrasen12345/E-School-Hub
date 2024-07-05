@@ -29,6 +29,7 @@ export class School extends Document {
   @Prop({
     type: String,
     required: true,
+    select: false,
   })
   password: string;
 
