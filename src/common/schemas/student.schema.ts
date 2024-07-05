@@ -1,5 +1,4 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { ApiProperty } from '@nestjs/swagger';
 import { Document, Schema as MongooseSchema } from 'mongoose';
 import { School } from './school.schema';
 
@@ -20,11 +19,6 @@ import { School } from './school.schema';
   },
 })
 export class Student extends Document {
-  @ApiProperty({
-    type: String,
-    required: true,
-    description: 'student name property!',
-  })
   @Prop({
     type: String,
     required: true,
@@ -85,6 +79,7 @@ export class Student extends Document {
   @Prop({
     type: Boolean,
     required: true,
+    default: false,
   })
   isDeleted: boolean;
 
@@ -101,7 +96,7 @@ export class Student extends Document {
 export const StudentSchema = SchemaFactory.createForClass(Student);
 
 StudentSchema.virtual('school', {
-  ref: Student.name,
+  ref: School.name,
   localField: 'schoolId',
   foreignField: '_id',
   justOne: true,
