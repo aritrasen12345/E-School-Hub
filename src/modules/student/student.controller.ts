@@ -136,7 +136,7 @@ export class StudentController {
     ApiResponse<{
       name: string;
       parentName: string;
-      standard: string;
+      standard: number;
       section: string;
       roll: string;
       mobileNo: string;
@@ -175,7 +175,7 @@ export class StudentController {
   async deleteStudent(@Body() body: DeleteStudentRequestDto): Promise<
     ApiResponse<{
       name: string;
-      class: string;
+      standard: number;
       id: string;
       isDeleted: boolean;
     }>
@@ -189,7 +189,7 @@ export class StudentController {
       message: 'Student deleted successfully!',
       data: {
         name: deletedStudent?.name,
-        class: deletedStudent?.standard,
+        standard: deletedStudent?.standard,
         id: deletedStudent?.id,
         isDeleted: deletedStudent?.isDeleted,
       },
