@@ -1,17 +1,26 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsDefined, IsMongoId, IsNotEmpty, IsString } from 'class-validator';
+import {
+  IsDefined,
+  IsMongoId,
+  IsNotEmpty,
+  IsNumber,
+  IsString,
+  Max,
+  Min,
+} from 'class-validator';
 
 export class UpdateStudentRequestDto {
   @ApiProperty({
-    type: String,
+    type: Number,
     required: true,
     description: 'Provide student standard!',
-    example: 'test student standard',
+    example: 5,
   })
   @IsDefined()
-  @IsString()
-  @IsNotEmpty()
-  standard: string;
+  @IsNumber()
+  @Min(1)
+  @Max(12)
+  standard: number;
 
   @ApiProperty({
     type: String,
@@ -39,7 +48,7 @@ export class UpdateStudentRequestDto {
     type: String,
     required: true,
     description: 'Provide student schoolId!',
-    example: 'test student schoolId',
+    example: '6687a4a0269f9762fe0c5e69',
   })
   @IsDefined()
   @IsString()
@@ -84,12 +93,13 @@ export class UpdateStudentRequestDto {
     type: String,
     required: true,
     description: 'Provide student standardToUpdate!',
-    example: 'test student standardToUpdate',
+    example: 12,
   })
   @IsDefined()
-  @IsString()
-  @IsNotEmpty()
-  standardToUpdate: string;
+  @IsNumber()
+  @Min(1)
+  @Max(12)
+  standardToUpdate: number;
 
   @ApiProperty({
     type: String,

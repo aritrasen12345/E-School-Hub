@@ -13,4 +13,11 @@ export class JWTStrategy extends PassportStrategy(Strategy) {
       secretOrKey: appConfig().appSecret,
     });
   }
+
+  async validate(payload: any) {
+    this.logger.debug('Inside validate');
+    return {
+      id: payload.id,
+    };
+  }
 }

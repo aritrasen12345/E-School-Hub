@@ -105,7 +105,12 @@ export class StudentService {
     }
 
     // * RETURN THE NEW STUDENT
-    return createdStudent;
+    return this.getStudentById(createdStudent.id);
+  }
+
+  // * METHOD TO GET STUDENT BY ID
+  async getStudentById(studentId: string): Promise<StudentDocument> {
+    return this.studentModel.findById(studentId).populate('school').exec();
   }
 
   // * METHOD TO FETCH ALL STUDENTS
