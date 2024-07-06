@@ -1,6 +1,5 @@
 import {
   BadRequestException,
-  Inject,
   Injectable,
   Logger,
   NotFoundException,
@@ -18,9 +17,10 @@ import {
 import { InjectModel } from '@nestjs/mongoose';
 import { School } from 'src/common/schemas';
 import { Model } from 'mongoose';
-import { JwtService } from '@nestjs/jwt';
 import { createSchoolTemplate } from 'src/common/assets/email_template.asset';
 import { MailService } from '../mail/mail.service';
+import * as jwt from 'jsonwebtoken';
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class SchoolService {
@@ -28,9 +28,8 @@ export class SchoolService {
 
   constructor(
     @InjectModel(School.name) private readonly schoolModel: Model<School>,
-    @Inject('CREATED_SCHOOL_JWT')
-    private readonly createSchoolJwtService: JwtService,
     private readonly mailService: MailService,
+    private readonly configService: ConfigService,
   ) {}
 
   // * METHOD TO CREATE A NEW SCHOOL
@@ -78,9 +77,13 @@ export class SchoolService {
     }
 
     // * WE WILL GENERATE A LINK WITH THE HELP OF schoolId AND JWT TOKEN WHICH WILL BE SENT TO THE SCHOOL'S EMAIL.
-    const token = await this.createSchoolJwtService.signAsync({
-      id: createdSchool._id,
-    });
+    const token = jwt.sign(
+      {
+        id: createdSchool._id,
+      },
+      this.configService.get<string>('CREATED_SCHOOL_SECRET_KEY'),
+      { expiresIn: '1d' },
+    );
 
     // * ADD THE TOKEN INTO THE DOCUMENT
     createdSchool.verifyToken = token;

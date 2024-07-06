@@ -18,7 +18,6 @@ export class JWTStrategy extends PassportStrategy(Strategy) {
     this.logger.debug('Inside validate');
     return {
       id: payload.id,
-      user_role_code: payload.user_role_code,
     };
   }
 }

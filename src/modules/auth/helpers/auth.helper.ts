@@ -1,13 +1,13 @@
 import {
-  Inject,
   Logger,
   NotFoundException,
   UnauthorizedException,
 } from '@nestjs/common';
-import { JwtService } from '@nestjs/jwt';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { RefreshToken } from 'src/common/schemas';
+import * as jwt from 'jsonwebtoken';
+import { ConfigService } from '@nestjs/config';
 
 export class AuthHelper {
   private readonly logger = new Logger(AuthHelper.name);
@@ -15,8 +15,7 @@ export class AuthHelper {
   constructor(
     @InjectModel(RefreshToken.name)
     private readonly refreshTokenModel: Model<RefreshToken>,
-    @Inject('ACCESS_JWT') private readonly accessJwtService: JwtService,
-    @Inject('REFRESH_JWT') private readonly refreshJwtService: JwtService,
+    private readonly configService: ConfigService,
   ) {}
 
   // * METHOD TO GENERATE ACCESS AND REFRESH TOKEN
@@ -27,12 +26,22 @@ export class AuthHelper {
     this.logger.debug('Inside generateTokens!');
 
     // * GENERATE THE ACCESS TOKEN
-    const accessToken = await this.accessJwtService.signAsync({ id: schoolId });
+    const accessToken = jwt.sign(
+      { id: schoolId },
+      this.configService.get<string>('ACCESS_TOKEN_SECRET_KEY'),
+      {
+        expiresIn: '10m',
+      },
+    );
 
     // * GENERATE THE REFRESH TOKEN
-    const refreshToken = await this.refreshJwtService.signAsync({
-      id: schoolId,
-    });
+    const refreshToken = jwt.sign(
+      { id: schoolId },
+      this.configService.get<string>('REFRESH_TOKEN_SECRET_KEY'),
+      {
+        expiresIn: '30d',
+      },
+    );
 
     // * SAVE THE REFRESH_TOKEN IN THE DB
     const newRefreshToken = new this.refreshTokenModel({
@@ -65,13 +74,18 @@ export class AuthHelper {
      * THE SYNTAX {id: schoolId} = .... JUST MEANS I AM DESTRUCTING AN OBJECT AND TAKING
      * THE {id} KEY AND RE-NAMING IT AS {schoolId}
      */
-    const { id: schoolId } = await this.refreshJwtService.verify(refreshToken);
+    const payload = jwt.verify(
+      refreshToken,
+      this.configService.get<string>('REFRESH_TOKEN_SECRET_KEY'),
+    );
+
+    const schoolId = payload['id'];
 
     // * FINDING THE REFRESH TOKEN IN THE DB
     const foundRefreshToken = await this.refreshTokenModel.findOne({
       token: refreshToken,
       // * THE schoolId should be the same the encrypted schoolId
-      schoolId: schoolId,
+      schoolId,
       /**
        * THE REQUest TO REFRESH THE ACCESS TOKEN SHOULD COME FROM THE SAME IP ADDRESS
        * TO WHICH THIS REFRESH TOKEN WAS BEING ASSIGNED TO. HENCE MATCHING IP

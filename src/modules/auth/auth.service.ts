@@ -1,7 +1,6 @@
 // * PACKAGE IMPORTS
 import {
   BadRequestException,
-  Inject,
   Injectable,
   Logger,
   NotFoundException,
@@ -14,12 +13,12 @@ import { Model } from 'mongoose';
 import { RefreshToken, School } from 'src/common/schemas';
 import { AuthHelper } from './helpers/auth.helper';
 import { SchoolDocument } from 'src/common/types';
-import { JwtService } from '@nestjs/jwt';
 import { AuthUtil } from './util/auth.util';
 import { getForgetPasswordEmailTemplate } from 'src/common/assets/email_template.asset';
 import { MailService } from '../mail/mail.service';
 import { ResetPasswordRequestDto } from './dtos';
 import { ConfigService } from '@nestjs/config';
+import * as jwt from 'jsonwebtoken';
 
 @Injectable()
 export class AuthService {
@@ -30,9 +29,6 @@ export class AuthService {
     @InjectModel(RefreshToken.name)
     private readonly refreshTokenModel: Model<RefreshToken>,
     private readonly authHelper: AuthHelper,
-    @Inject('ACCESS_JWT') private readonly accessJwtService: JwtService,
-    @Inject('FORGET_PASSWORD_JWT')
-    private readonly forgetPasswordJwtService: JwtService,
     private readonly authUtil: AuthUtil,
     private readonly mailService: MailService,
     private readonly configService: ConfigService,
@@ -113,9 +109,13 @@ export class AuthService {
     }
 
     // * IF THE REFRESH TOKEN IS VALIDATED SUCCESSFULLY THEN CREATING A NEW TOKEN
-    const accessToken = await this.accessJwtService.signAsync({
-      id: schoolId,
-    });
+    const accessToken = jwt.sign(
+      {
+        id: schoolId,
+      },
+      this.configService.get<string>('ACCESS_TOKEN_SECRET_KEY'),
+      { expiresIn: '10m' },
+    );
 
     return { accessToken };
   }
@@ -205,9 +205,13 @@ export class AuthService {
     /**
      * IF THE SCHOOL IS PRESENT THEN WE WILL GENERATE A LINK WITH THE HELP OF schoolId and JWT TOKEN WHICH WILL BE SENT TO THE SCHOOL'S EMAIl.
      */
-    const token = await this.forgetPasswordJwtService.signAsync({
-      id: foundSchool?._id,
-    });
+    const token = jwt.sign(
+      {
+        id: foundSchool?._id,
+      },
+      this.configService.get<string>('FORGET_PASSWORD_SECRET_KEY'),
+      { expiresIn: '60min' },
+    );
 
     // * ADD THE VERIFY_TOKEN IN SCHOOL TOKEN
     foundSchool.verifyToken = token;
@@ -262,9 +266,10 @@ export class AuthService {
     }
 
     // * VERIFY FORGET_PASSWORD
-    const verifyToken = await this.forgetPasswordJwtService.verifyAsync(token, {
-      secret: this.configService.get<string>('FORGET_PASSWORD_SECRET_KEY'),
-    });
+    const verifyToken = jwt.verify(
+      token,
+      this.configService.get<string>('FORGET_PASSWORD_SECRET_KEY'),
+    );
 
     if (!verifyToken) {
       throw new UnauthorizedException('Invalid token!');
