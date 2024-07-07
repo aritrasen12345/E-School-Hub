@@ -1,13 +1,16 @@
 import { ApiProperty } from '@nestjs/swagger';
 import {
   IsDefined,
+  IsEnum,
   IsMongoId,
   IsNotEmpty,
   IsNumber,
   IsString,
+  Length,
   Max,
   Min,
 } from 'class-validator';
+import { GENDER } from 'src/common/enums';
 
 export class UpdateStudentRequestDto {
   @ApiProperty({
@@ -85,9 +88,10 @@ export class UpdateStudentRequestDto {
     example: 'test student genderToUpdate',
   })
   @IsDefined()
+  @IsEnum(GENDER)
   @IsString()
   @IsNotEmpty()
-  genderToUpdate: string; //! TODO USE ENUM HERE
+  genderToUpdate: GENDER;
 
   @ApiProperty({
     type: String,
@@ -119,9 +123,10 @@ export class UpdateStudentRequestDto {
     example: 'test student mobileNoToUpdate',
   })
   @IsDefined()
+  @Length(10)
   @IsString()
   @IsNotEmpty()
-  mobileNoToUpdate: string; //! TODO ADD LENGTH VALIDATION
+  mobileNoToUpdate: string;
 
   @ApiProperty({
     type: String,

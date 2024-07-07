@@ -6,6 +6,7 @@ import {
   CreateStandardRequestDto,
   DeleteStandardRequestDto,
   GetStandardsListRequestDto,
+  StandardResponseDto,
   UpdateStandardRequestDto,
 } from './dtos';
 import { ApiResponse } from 'src/common/interfaces';
@@ -27,7 +28,7 @@ export class StandardController {
   })
   @ApiOkResponse({
     description: 'Standard created successfully!',
-    // type: '' //! TODO DEFINE TYPE
+    type: StandardResponseDto,
   })
   async createStandard(
     @Body() body: CreateStandardRequestDto,
@@ -58,7 +59,7 @@ export class StandardController {
   })
   @ApiOkResponse({
     description: 'Standard found successfully!',
-    // type: '' //! TODO DEFINE TYPE
+    type: [StandardResponseDto],
   })
   async getStandardBySchool(
     @Body() body: GetStandardsListRequestDto,
@@ -82,7 +83,7 @@ export class StandardController {
   })
   @ApiOkResponse({
     description: 'Standard updated successfully!',
-    // type: '' //! TODO DEFINE TYPE
+    type: StandardResponseDto,
   })
   async updateStandard(
     @Body() body: UpdateStandardRequestDto,
@@ -107,7 +108,7 @@ export class StandardController {
   })
   @ApiOkResponse({
     description: 'Standard deleted successfully!',
-    // type: //! TODO DEFINE TYPE
+    type: StandardResponseDto,
   })
   async deleteStandard(
     @Body() body: DeleteStandardRequestDto,

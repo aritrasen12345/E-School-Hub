@@ -6,6 +6,7 @@ import {
   IsNotEmpty,
   IsNumber,
   IsString,
+  Length,
   Max,
   Min,
 } from 'class-validator';
@@ -76,9 +77,10 @@ export class CreateStudentRequestDto {
     example: 'test student mobileNo',
   })
   @IsDefined()
+  @Length(10)
   @IsString()
   @IsNotEmpty()
-  mobileNo: string; //! TODO ADD LENGTH VALIDATION
+  mobileNo: string;
 
   @ApiProperty({
     type: String,

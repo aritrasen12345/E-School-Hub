@@ -88,14 +88,12 @@ export class AuthController {
   })
   @ApiOkResponse({
     description: 'Refresh token deleted successfully!',
-    // type: String, //! TODO DEFINE TYPE
+    type: Object,
   })
-  //! TODO DEFINE RETURN TYPE
-  //! DEFINE TYPE FOR req
   async deleteRefreshToken(
     @Req() req,
     @Body() body: RefreshAccessTokenRequestDto,
-  ) {
+  ): Promise<ApiResponse<object>> {
     this.logger.debug('Inside deleteRefreshToken!');
 
     const { refreshToken } = body;
@@ -120,7 +118,7 @@ export class AuthController {
     operationId: 'verifySchool',
   })
   @ApiOkResponse({
-    description: 'Organisation verified successfully!',
+    description: 'Organization verified successfully!',
     type: SchoolResponseDto,
   })
   async verifySchool(
@@ -147,7 +145,7 @@ export class AuthController {
   @ApiOkResponse({
     description:
       'A password reset link has been sent to your registered email Id.',
-    // type: //! TODO DEFINE TYPE
+    type: Array,
   })
   async forgetPassword(
     @Body() body: SendEmailRequestDto,
@@ -156,13 +154,12 @@ export class AuthController {
 
     const { email } = body;
 
-    const savedEmailDetails =
-      await this.authService.sendPasswordResetEmail(email);
+    await this.authService.sendPasswordResetEmail(email);
 
     return {
       message:
         'A password reset link has been sent to your registered email Id.',
-      data: savedEmailDetails,
+      data: [],
     };
   }
 
@@ -174,7 +171,7 @@ export class AuthController {
   })
   @ApiOkResponse({
     description: 'Password updated successfully!',
-    // type: '' //! TODO DEFINE TYPE
+    type: SchoolResponseDto,
   })
   async resetPassword(
     @Body() body: ResetPasswordRequestDto,
