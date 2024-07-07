@@ -2,17 +2,17 @@ export const getForgetPasswordEmailTemplate = (
   schoolName: string,
   token: string,
 ) => {
-  const logoURL = `https://drive.google.com/file/d/1A86Wlc1FsBzavIiDPy_h_YlkHFUAdmvP/view?usp=sharing`;
+  const logoURL = `https://drive.google.com/file/d/1-tcmPYLPP6JjjzwmV3e-juFYf7q4Wubl/view?usp=sharing`;
   const authUrl = `${process.env.FRONTEND_BASE_URL}/reset_password/${token}`;
 
   return `<div style="max-width: 600px; margin: 20px auto; padding: 20px; background: linear-gradient(135deg, #ff9ba8, #6d76e8); box-shadow: 0 0 20px rgba(0, 0, 0, 0.1); border-radius: 10px; font-family: 'Roboto', 'Arial', sans-serif; text-align: center; color: #fff;">
         <div style="margin-bottom: 20px;">
-          <img src=${logoURL} alt="DigiSchool Logo" style="width: 150px; height: 150px; border-radius: 50%; border: 5px solid #6d76e8; object-fit: cover;">
+          <img src=${logoURL} alt="E-School-Hub Logo" style="width: 150px; height: 150px; border-radius: 50%; border: 5px solid #6d76e8; object-fit: cover;">
         </div>
       
         <h2 style="color: #fff; font-size: 24px; letter-spacing: 2px;">Password Reset</h2>
         <p style="color: #eee; font-size: 16px;">Hello Admin, (${schoolName})</p>
-        <p style="color: #eee; font-size: 16px;">We received a request to reset your password for DigiSchool. If you made this request, click the button below to reset your password. If you didn't make this request, you can ignore this email.</p>
+        <p style="color: #eee; font-size: 16px;">We received a request to reset your password for E-School-Hub. If you made this request, click the button below to reset your password. If you didn't make this request, you can ignore this email.</p>
       
         <a href=${authUrl} style="display: inline-block; padding: 15px 30px; background: linear-gradient(45deg, #6d76e8, #ff9ba8); color: #fff; text-decoration: none; border: none; border-radius: 30px; font-weight: bold; font-size: 18px; transition: transform 0.3s ease-in-out;" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">Reset Password</a>
       
@@ -20,14 +20,14 @@ export const getForgetPasswordEmailTemplate = (
       
         <p style="color: #eee; font-size: 16px; margin-top: 20px;">If you did not request a password reset or have any concerns, please contact our support team immediately.</p>
       
-        <p style="color: #eee; font-size: 16px; margin-top: 20px;">Thank you for choosing DigiSchool!</p>
+        <p style="color: #eee; font-size: 16px; margin-top: 20px;">Thank you for choosing E-School-Hub!</p>
       
-        <p style="color: #eee; font-size: 16px; margin-top: 20px;">Best Regards,<br>DigiSchool Team</p>
+        <p style="color: #eee; font-size: 16px; margin-top: 20px;">Best Regards,<br>E-School-Hub Team</p>
       </div>`;
 };
 
 export const createSchoolTemplate = (schoolName: string, token: string) => {
-  const logoURL = `https://drive.google.com/file/d/1A86Wlc1FsBzavIiDPy_h_YlkHFUAdmvP/view?usp=sharing`;
+  const logoURL = `https://drive.google.com/file/d/1-tcmPYLPP6JjjzwmV3e-juFYf7q4Wubl/view?usp=sharing`;
   const authUrl = `${process.env.FRONTEND_BASE_URL}/verify_school_email/${token}`;
 
   return `<!DOCTYPE html>
@@ -35,7 +35,7 @@ export const createSchoolTemplate = (schoolName: string, token: string) => {
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Welcome to DigiSchool</title>
+        <title>Welcome to E-School-Hub</title>
         <style>
             body {
                 font-family: Arial, sans-serif;
@@ -75,16 +75,16 @@ export const createSchoolTemplate = (schoolName: string, token: string) => {
     <body>
     <div style="max-width: 600px; margin: 20px auto; padding: 20px; background: linear-gradient(135deg, #ff9ba8, #6d76e8); box-shadow: 0 0 20px rgba(0, 0, 0, 0.1); border-radius: 10px; font-family: 'Roboto', 'Arial', sans-serif; text-align: center; color: #fff;">
       <div style="margin-bottom: 20px;">
-        <img src=${logoURL} alt="DigiSchool Logo" style="width: 150px; height: 150px; border-radius: 50%; border: 5px solid #6d76e8; object-fit: cover;">
+        <img src=${logoURL} alt="E-School-Hub Logo" style="width: 150px; height: 150px; border-radius: 50%; border: 5px solid #6d76e8; object-fit: cover;">
       </div>
         <div class="container">
-            <h1>Welcome to DigiSchool!</h1>
+            <h1>Welcome to E-School-Hub!</h1>
             <p>Dear Admin (${schoolName}),</p>
             <p>We are excited to have you on board. Thank you for joining our platform. To get started, click the button below and verify your email Id:</p>
     
             <a href=${authUrl} class="btn">Verify</a>
             
-            <p>Best regards,<br>Your DigiSchool Team</p>
+            <p>Best regards,<br>Your E-School-Hub Team</p>
         </div>
     </body>
     </html>
