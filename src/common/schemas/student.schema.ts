@@ -1,6 +1,7 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document, Schema as MongooseSchema } from 'mongoose';
 import { School } from './school.schema';
+import { GENDER } from '../enums';
 
 @Schema({
   versionKey: false,
@@ -36,6 +37,7 @@ export class Student extends Document {
   @Prop({
     type: String,
     required: true,
+    enum: GENDER,
   })
   gender: string;
 

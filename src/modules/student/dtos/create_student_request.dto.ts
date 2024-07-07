@@ -1,6 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 import {
   IsDefined,
+  IsEnum,
   IsMongoId,
   IsNotEmpty,
   IsNumber,
@@ -8,6 +9,7 @@ import {
   Max,
   Min,
 } from 'class-validator';
+import { GENDER } from 'src/common/enums';
 
 export class CreateStudentRequestDto {
   @ApiProperty({
@@ -39,9 +41,10 @@ export class CreateStudentRequestDto {
     example: 'test student gender',
   })
   @IsDefined()
+  @IsEnum(GENDER)
   @IsString()
   @IsNotEmpty()
-  gender: string; //! TODO USE ENUM HERE
+  gender: GENDER;
 
   @ApiProperty({
     type: Number,
