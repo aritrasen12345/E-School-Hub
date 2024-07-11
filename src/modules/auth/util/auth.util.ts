@@ -12,10 +12,7 @@ export class AuthUtil {
     this.logger.debug('Inside verifySchoolJWT!');
 
     // * VERIFY THE TOKEN
-    const payload = jwt.verify(
-      token,
-      this.configService.get<string>('CREATED_SCHOOL_SECRET_KEY'),
-    );
+    const payload = jwt.verify(token, process.env.CREATED_SCHOOL_SECRET_KEY);
 
     const schoolId = payload['id'];
 
@@ -31,10 +28,7 @@ export class AuthUtil {
     this.logger.debug('Inside verifyResetPasswordJWT!');
 
     // * VERIFY FORGET_PASSWORD
-    const payload = jwt.verify(
-      token,
-      this.configService.get<string>('FORGET_PASSWORD_SECRET_KEY'),
-    );
+    const payload = jwt.verify(token, process.env.FORGET_PASSWORD_SECRET_KEY);
 
     const schoolId = payload['id'];
 
