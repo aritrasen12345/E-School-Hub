@@ -54,7 +54,7 @@ async function bootstrap() {
   });
 
   // * Define PORT
-  const APP_PORT = configService.get<string>('APP_PORT') || 3000;
+  const APP_PORT = configService.get<string>('APP_PORT') || 8080;
 
   SwaggerModule.setup('swagger', app, document, {
     swaggerOptions: { persistAuthorization: true },
