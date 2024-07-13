@@ -1,4 +1,4 @@
-import { ApiProperty } from '@nestjs/swagger';
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import {
   IsDefined,
   IsEnum,
@@ -115,15 +115,14 @@ export class CreateStudentRequestDto {
   @IsNotEmpty()
   section: string;
 
-  @ApiProperty({
+  @ApiPropertyOptional({
     type: String,
-    required: true,
-    description: 'Provide student schoolId!',
-    example: '6687a4a0269f9762fe0c5e69',
+    required: false,
+    example: '65f1949c663d830ca74c5364',
   })
-  @IsDefined()
+  // @IsDefined()
   @IsString()
-  @IsNotEmpty({ message: 'No school ID was passed!' })
+  @IsNotEmpty()
   @IsMongoId()
   schoolId: string;
 }
