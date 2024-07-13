@@ -4,11 +4,8 @@ import {
   IsEnum,
   IsMongoId,
   IsNotEmpty,
-  IsNumber,
   IsString,
   Length,
-  Max,
-  Min,
 } from 'class-validator';
 import { GENDER } from 'src/common/enums';
 
@@ -48,22 +45,20 @@ export class CreateStudentRequestDto {
   gender: GENDER;
 
   @ApiProperty({
-    type: Number,
+    type: String,
     required: true,
     description: 'Provide student standard!',
-    example: 5,
+    example: '1',
   })
   @IsDefined()
-  @IsNumber()
-  @Min(1)
-  @Max(12)
-  standard: number;
+  @IsString()
+  standard: string;
 
   @ApiProperty({
     type: String,
     required: true,
     description: 'Provide student roll!',
-    example: 'test student roll',
+    example: '1',
   })
   @IsDefined()
   @IsString()
@@ -120,7 +115,6 @@ export class CreateStudentRequestDto {
     required: false,
     example: '65f1949c663d830ca74c5364',
   })
-  // @IsDefined()
   @IsString()
   @IsNotEmpty()
   @IsMongoId()

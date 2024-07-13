@@ -139,7 +139,7 @@ export class StudentService {
     const { schoolId, page = 1, size = 10, searchString = '' } = body;
 
     const limit = size;
-    const skip = (page - 1) * size;
+    const skip = (+page - 1) * +size;
 
     const findQuery: any = {
       schoolId,
@@ -163,7 +163,7 @@ export class StudentService {
     // FIND STUDENTS
     const foundStudents = await this.studentModel
       .find(findQuery)
-      .limit(limit)
+      .limit(+limit)
       .skip(skip);
 
     // * COUNT STUDENTS NUMBER
@@ -312,14 +312,14 @@ export class StudentService {
         schoolId,
         isDeleted: false,
       })
-      .limit(limit);
+      .limit(+limit);
 
-    // IF NO STUDENTS FOUND
+    // * IF NO STUDENTS FOUND
     if (!studentDetails || studentDetails.length === 0) {
       throw new NotFoundException('No students found!');
     }
 
-    // CONVERT STUDENTS DATA INTO CSV FILE
+    // * CONVERT STUDENTS DATA INTO CSV FILE
     const csvData = json2csv(studentDetails, { fields: CSV_FIELDS });
 
     // * RETURN THE PARSE DATA
