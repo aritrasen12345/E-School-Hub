@@ -12,10 +12,9 @@ export class TasksService {
     private readonly configService: ConfigService,
   ) {}
 
-  // * 6HR INTERVAL
-  @Cron('0 */6 * * *')
+  @Cron('0 */12 * * *')
   async handleCron() {
-    this.logger.debug('Called when the current second is 45');
+    this.logger.debug('Called when the current hour is 12');
     const response = await this.httpService.axiosRef.get<string>(
       this.configService.get('BACKEND_BASE_URL'),
     );
