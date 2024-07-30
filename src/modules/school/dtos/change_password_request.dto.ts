@@ -1,4 +1,4 @@
-import { ApiProperty } from '@nestjs/swagger';
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import {
   IsDefined,
   IsMongoId,
@@ -8,12 +8,12 @@ import {
 } from 'class-validator';
 
 export class ChangePasswordRequestDto {
-  @ApiProperty({
+  @ApiPropertyOptional({
     type: String,
-    required: true,
+    required: false,
     example: '65f1949c663d830ca74c5364',
   })
-  @IsDefined()
+  // @IsDefined()
   @IsString()
   @IsNotEmpty()
   @IsMongoId()

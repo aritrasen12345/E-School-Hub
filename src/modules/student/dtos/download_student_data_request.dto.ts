@@ -1,32 +1,24 @@
-import { ApiProperty } from '@nestjs/swagger';
-import {
-  IsDefined,
-  IsMongoId,
-  IsNotEmpty,
-  IsNumber,
-  IsString,
-} from 'class-validator';
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+import { IsDefined, IsMongoId, IsNotEmpty, IsString } from 'class-validator';
 
 export class DownloadStudentDataRequestDto {
   @ApiProperty({
     type: Number,
     required: true,
     description: 'provide limit',
-    example: 10,
-  })
-  @IsDefined()
-  @IsNumber()
-  limit: number;
-
-  @ApiProperty({
-    type: String,
-    required: true,
-    description: 'Provide student schoolId!',
-    example: '6687a4a0269f9762fe0c5e69',
+    example: 1000,
   })
   @IsDefined()
   @IsString()
-  @IsNotEmpty({ message: 'No school ID was passed!' })
+  limit: string;
+
+  @ApiPropertyOptional({
+    type: String,
+    required: false,
+    example: '65f1949c663d830ca74c5364',
+  })
+  @IsString()
+  @IsNotEmpty()
   @IsMongoId()
   schoolId: string;
 }

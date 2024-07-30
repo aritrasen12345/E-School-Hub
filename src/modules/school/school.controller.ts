@@ -6,6 +6,7 @@ import {
   CreateSchoolRequestDto,
   DeleteSchoolRequestDto,
   GetSchoolRequestDto,
+  SchoolResponseDto,
   UpdateSchoolRequestDto,
 } from './dtos';
 import { ApiResponse } from 'src/common/interfaces';
@@ -60,7 +61,7 @@ export class SchoolController {
   })
   @ApiOkResponse({
     description: 'School record found successfully!',
-    // type: '' //! TODO DEFINE TYPE
+    type: SchoolResponseDto,
   })
   async getSchool(
     @Body() body: GetSchoolRequestDto,
@@ -114,7 +115,7 @@ export class SchoolController {
   @ApiOperation({ summary: 'Change Password', operationId: 'changePassword' })
   @ApiOkResponse({
     description: 'Password changed successfully!',
-    // type: '' //! TODO DEFINE TYPE
+    type: Array,
   })
   async changePassword(
     @Body() body: ChangePasswordRequestDto,

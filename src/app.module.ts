@@ -13,6 +13,7 @@ import { ResponseInterceptor } from './common/interceptors';
 import { MailModule } from './modules/mail/mail.module';
 import { SchoolModule } from './modules/school/school.module';
 import { StandardModule } from './modules/standard/standard.module';
+import { AddSchoolIdInterceptor } from './modules/auth/guards/jwt-auth.guard';
 
 @Module({
   imports: [
@@ -52,6 +53,10 @@ import { StandardModule } from './modules/standard/standard.module';
     {
       provide: APP_FILTER,
       useClass: AllExceptionFilter,
+    },
+    {
+      provide: APP_INTERCEPTOR,
+      useClass: AddSchoolIdInterceptor,
     },
     AppService,
   ],

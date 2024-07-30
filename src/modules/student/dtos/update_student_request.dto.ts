@@ -1,13 +1,16 @@
-import { ApiProperty } from '@nestjs/swagger';
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import {
   IsDefined,
+  IsEnum,
   IsMongoId,
   IsNotEmpty,
   IsNumber,
   IsString,
+  Length,
   Max,
   Min,
 } from 'class-validator';
+import { GENDER } from 'src/common/enums';
 
 export class UpdateStudentRequestDto {
   @ApiProperty({
@@ -44,15 +47,13 @@ export class UpdateStudentRequestDto {
   @IsNotEmpty()
   roll: string;
 
-  @ApiProperty({
+  @ApiPropertyOptional({
     type: String,
-    required: true,
-    description: 'Provide student schoolId!',
-    example: '6687a4a0269f9762fe0c5e69',
+    required: false,
+    example: '65f1949c663d830ca74c5364',
   })
-  @IsDefined()
   @IsString()
-  @IsNotEmpty({ message: 'No school ID was passed!' })
+  @IsNotEmpty()
   @IsMongoId()
   schoolId: string;
 
@@ -85,9 +86,10 @@ export class UpdateStudentRequestDto {
     example: 'test student genderToUpdate',
   })
   @IsDefined()
+  @IsEnum(GENDER)
   @IsString()
   @IsNotEmpty()
-  genderToUpdate: string; //! TODO USE ENUM HERE
+  genderToUpdate: GENDER;
 
   @ApiProperty({
     type: String,
@@ -119,9 +121,10 @@ export class UpdateStudentRequestDto {
     example: 'test student mobileNoToUpdate',
   })
   @IsDefined()
+  @Length(10)
   @IsString()
   @IsNotEmpty()
-  mobileNoToUpdate: string; //! TODO ADD LENGTH VALIDATION
+  mobileNoToUpdate: string;
 
   @ApiProperty({
     type: String,

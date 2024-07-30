@@ -1,4 +1,4 @@
-import { ApiProperty } from '@nestjs/swagger';
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
 import {
   ArrayMinSize,
@@ -12,14 +12,13 @@ import {
 import { Section } from './section.dto';
 
 export class UpdateStandardRequestDto {
-  @ApiProperty({
+  @ApiPropertyOptional({
     type: String,
-    required: true,
+    required: false,
     example: '65f1949c663d830ca74c5364',
   })
-  @IsDefined()
   @IsString()
-  @IsNotEmpty({ message: 'No school ID was passed!' })
+  @IsNotEmpty()
   @IsMongoId()
   schoolId: string;
 

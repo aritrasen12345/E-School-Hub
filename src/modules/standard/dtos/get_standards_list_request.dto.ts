@@ -1,15 +1,14 @@
-import { ApiProperty } from '@nestjs/swagger';
-import { IsDefined, IsMongoId, IsNotEmpty, IsString } from 'class-validator';
+import { ApiPropertyOptional } from '@nestjs/swagger';
+import { IsMongoId, IsNotEmpty, IsString } from 'class-validator';
 
 export class GetStandardsListRequestDto {
-  @ApiProperty({
+  @ApiPropertyOptional({
     type: String,
-    required: true,
+    required: false,
     example: '65f1949c663d830ca74c5364',
   })
-  @IsDefined()
   @IsString()
-  @IsNotEmpty({ message: 'No school ID was passed!' })
+  @IsNotEmpty()
   @IsMongoId()
   schoolId: string;
 }

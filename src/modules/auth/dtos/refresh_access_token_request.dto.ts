@@ -6,7 +6,8 @@ export class RefreshAccessTokenRequestDto {
     type: String,
     required: true,
     description: 'Provide refreshToken!',
-    example: '', //! TODO PROVIDE EXAMPLE
+    example:
+      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY2ODdhNGEwMjY5Zjk3NjJmZTBjNWU2OSIsImlhdCI6MTcyMDM1NTYzOCwiZXhwIjoxNzIyOTQ3NjM4fQ.VwPvrukrUTZ2RN0qWuJyTZeLApRWmUI10SAs2NPo-BE',
   })
   @IsDefined()
   @IsString()
