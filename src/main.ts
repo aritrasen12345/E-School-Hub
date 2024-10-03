@@ -14,7 +14,7 @@ async function bootstrap() {
 
   // * Define logger
   const logger = new Logger('Main Module');
-  0;
+
   // * Define configService
   const configService = app.get(ConfigService);
 
